@@ -1,4 +1,13 @@
-#let main-color = rgb(50, 0, 193)
+#let main-color = rgb(4, 46, 199)
+
+#let circled_numbering = (n) => {
+  let circled_numbers = ("①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨")
+  if n >= 1 and n < 10 {
+    circled_numbers.at(n - 1)
+  } else {
+    [#n.]
+  }
+}
 
 #let main-rules(doc) = {
   set text(
@@ -20,7 +29,7 @@
   set par(justify: true)
   set table(stroke: 0.5pt)
   set list(indent: 5pt)
-  set enum(indent: 5pt)
+  set enum(numbering: circled_numbering, indent: 5pt)
   set heading(numbering: "1.")
   show heading: it => [ 
     #let fixed-size = 14 - it.level
