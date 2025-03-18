@@ -118,7 +118,7 @@ En el curso, veremos principalmente las siguientes distribuciones discretas:
   
   Si $p$ es un vector multivariado $(p_1, p_2, dots, p_n)$, se transforma en una distribución multinomial, denominada $X ~ MultBin(p, n)$.
 
-=== Distribuciones continuas
+== Distribuciones continuas
 
 + Normal: $X ~ normal(mu, sigma^2)$. Su función de densidad es:
 
@@ -146,7 +146,7 @@ En el curso, veremos principalmente las siguientes distribuciones discretas:
   X_1 ~ chi_[n_1]^2 and X_2 ~ chi_[n_2]^2 "entonces" F=(X_1\/n_1)/(X_2\/n_2)~F_(n_1,n_2)
   $
 
-=== Covarianza de dos variables aleatorias
+== Covarianza de dos variables aleatorias
 
 Medida de cómo en promedio varían linealmente dos variables aleatorias entre sí.
 
@@ -158,7 +158,8 @@ $
 Si estas variables $X, Y$ son independientes, entonces su covarianza será cero, pues $EE[X Y] = EE[X] dot EE[Y]$ por la propiedad heredada de la esperanza.
 
 #warning-box[La implicancia $cov(X, Y) = 0 => X, Y "son independientes"$ es falsa, y es un error muy común asumir que es cierta.] 
-=== Correlación de dos variables aleatorias.
+
+== Correlación de dos variables aleatorias.
 
 Es una estandarización de la covarianza, para tener resultados interpretables en el rango $[-1, 1]$. Se calcula de la siguiente forma:
 
