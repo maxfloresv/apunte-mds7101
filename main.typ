@@ -166,3 +166,36 @@ Es una estandarización de la covarianza, para tener resultados interpretables e
 $
   corr(X, Y) = (cov(X, Y))/sqrt(var(X) dot var(Y)) = rho(X, Y)
 $
+
+= Semana 2: Repaso de probabilidad
+
+- Cuando decimos $corr(X,Y) = 0$, quiere decir que no hay información sobre la relación lineal entre $X$ e $Y$. Esto no quiere decir que $X$ e $Y$ sean independientes, porque pueden tener un tipo de relación no lineal, por ejemplo, cuadrática.
+
+  - Ejemplo: Sea $X ~ "U"[-1, 1]$ e $Y = X^2$, con $"U"(a,b)$ una distribución uniforme. Como los momentos de una variable $Z$ que distribuye uniformemente en el intervalo $(a, b)$ se calculan mediante la expresión:
+
+    $
+      EE(Z^n) = (b^(n+1)-a^(n+1))/((n+1) dot (b-a))
+    $
+
+    y $X$ es uniforme en el intervalo $[-1, 1]$, entonces su primer momento, $EE(X)$, es nulo. Además, $EE(X^3) = 0$. Esta última expresión nos sirve para deducir la contradicción, pues:
+
+    $
+      cov(X, Y) &= EE(X Y) - EE(X) dot EE(Y) \
+      &= EE(X Y) \
+      &= EE(X dot X^2) \
+      &= EE(X^3) = bold(0) 
+    $
+
+    pero $Y$ sí depende de $X$, entonces no pueden ser independientes.
+
+== Inferencia estadística
+
+#definition-box[
+  La inferencia estadística es una rama de la estadística que se encarga de hacer #keyword[predicciones] o #keyword[caracterizaciones] sobre una población a partir de una muestra.
+]
+
+Normalmente, habrá una variable $Y ~ f(X)$, con $f$ una función genérica llamada #keyword[modelo], que encuentra una relación. $Y$ se llama #keyword[variable endógena], porque depende de $X$. Será la variable que estudiaremos. Por otro lado, $X$ se llama #keyword[variable exógena], porque en el mundo ideal no dependen de nada.
+
+Haremos un estudio de $X$, con una sola variable. Por ejemplo, sea $Y := "demanda por poleras"$, y $X := "tallas" ("estaturas")$. En Chile, podríamos decir que el promedio de estatura en hombres es $overline(x)_H = "1.73 m"$ y en mujeres es $overline(x)_M = "1.58 m"$. Diremos que el mínimo es $"1 m"$, y el máximo es $"2.5 m"$.
+
+Podemos decir que las estaturas distribuyen como una variable aleatoria normal, es decir, $X ~ normal(mu, sigma^2)$, porque usualmente las concentraciones de estaturas toman esta forma por naturaleza.
