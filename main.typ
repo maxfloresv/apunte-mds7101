@@ -42,48 +42,51 @@ Son funciones que toman elementos del espacio muestral, y les asigna a cada uno 
 
 === Variables aleatorias discretas
 
-#definition[
-  Se dice que $X$ es una v. a. discreta si toma valores de un conjunto finito, o infinito numerable, y además $forall x$, $PP(X=x) != 0$.
-]
+Se dice que $X$ es una v. a. discreta si toma valores de un conjunto finito, o infinito numerable, y además $forall x$, $PP(X=x) != 0$.
 
 === Variables aleatorias continuas
 
-#definition[
-  Se dice que $X$ es una v. a. continua si $X$ toma cualquier valor real con probabilidad cero, es decir, $forall x, PP(X=x) = 0$.
-]
+Se dice que $X$ es una v. a. continua si $X$ toma cualquier valor real con probabilidad cero, es decir, $forall x, PP(X=x) = 0$.
 
 === Funciones de densidad
 
-Existen dos funciones de densidad.
+Existen dos funciones de densidad que permiten ver el comportamiento de una variable aleatoria.
 
-- PDF: _Probability Density Function_ ($f(x)$).
+- PDF: _Probability Density Function_ ($f(x)$). Describe cómo se distribuye la probabilidad a lo largo de los posibles valores de la v. a. En específico, $PP(a <= X <= b) = integral_a^b f(x) dif x$.
 
-- CDF: _Cummulative Density Function_ ($F(x)$).
+- CDF: _Cummulative Density Function_ ($F(x)$). Acumula la probabilidad desde $-infinity$ hasta un valor $x$ en el dominio. En específico, $F(x) = PP(X<=x)$.
 
-Estas funciones están directamente relacionadas mediante la fórmula $F(x) = integral_(-infinity)^(x) f(x) dif x$, lo que puede ser observado gráficamente en la @fig-pdf-cdf.
+Estas funciones están directamente relacionadas mediante la fórmula $F(x) = integral_(-infinity)^(x) f(t) dif t$, lo que puede ser observado gráficamente en la @fig-pdf-cdf.
 
 #figure(
   caption: [Funciones "PDF" ($f(x)$) y "CDF" ($F(x)$).],
   image("images/classes/pdf_cdf.svg")
 ) <fig-pdf-cdf>
 
+Si se conoce $F$, podemos conocer la probabilidad de un intervalo mediante la siguiente fórmula $PP(a <= X <= b) = F(b) - F(a)$.
+
+=== Esperanza de una variable aleatoria
+
+Definimos la esperanza de una variable aleatoria para las v. a. discretas y continuas como:
+
+- $X$ discreta: $EE[X] = sum_(Omega) x dot PP(X = x)$.
+
+- $X$ continua: $EE[X] = integral_(RR_X) x dot f(x) dif x$.
+
+También se puede definir como el primer momento de distribución. Los momentos de distribución se definen como $EE[X], EE[X^2], EE[X^3]$, etc.
+
 === Varianza de una variable aleatoria
 
-Definimos la varianza de una variable aleatoria discreta como:
+Definimos la varianza de una v. a. discreta y continua como:
 
-$
-  var(X) = EE[(X-EE[X])^2]
-$
+- $X$ discreta: $var(X) = EE[(X-EE[X])^2]$.
 
-Mientras que para las variables aleatorias continuas se tiene:
+- $X$ continua: $ var(X) = integral_RR_X (X-EE(X))^2 dot f(x) dif x$.
 
-$
-  var(X) = integral_RR_X (X-EE(X))^2 dot f(x) dif x
-$
-
-Con esto mismo podemos definir la desviación estándar de una variable aleatoria, la cual viene a ser la raíz cuadrada de la varianza de esta, se le conoce también como $sigma$ o #std[$X$].
+Con esto mismo podemos definir la desviación estándar de una variable aleatoria, la cual viene a ser la raíz cuadrada de su varianza. Se le conoce también como $sigma$ o #std[$X$].
 
 === Estandarización de una variable aleatoria
+
 Sea $X$ una variable aleatoria, se define la variable $Z=(X-mu)\/sigma$ con $mu = EE[X]$ y $sigma = sqrt(var(X))$. Se dice que $Z$ es la estandarización de $X$, pues cumple $EE[Z] = 0$ y $var(Z) = 1$.
 
 #warning-box[
@@ -91,59 +94,70 @@ Sea $X$ una variable aleatoria, se define la variable $Z=(X-mu)\/sigma$ con $mu 
 ]
 
 == Distribuciones discretas
-- *Bernoulli*: Cuando queremos lanzar una moneda una sola vez.
-$
-X ~ "Bernoulli"(p)\
-X= cases(1 "si es exitoso.",0 "si fracasa.")\
-PP(X=1)=p and PP(X=0)=1-p
-$
-Si se realiza el experimento multiples veces, se define otra distribución.
 
-*Binomial*: 
-$
-X ~ "Binomial"(p,n)\
-PP(X=k)= binom(n,k) dot p^k dot (1-p)^(n-k)\
-EE(X)=n p\
-VV"ar"(X)=n p dot (1-p)
-$
-Si $p$ es un vector multivariado, se transforma en una distribución multinomial.
-Es decir 
-$
-p=(x_0,...,x_n) -> "Multinomial"
-$
+En el curso, veremos principalmente las siguientes distribuciones discretas:
 
-Con esto tenemos algunas distribuciones más comunes.
++ Bernoulli: $X :=$ lanzamiento de una moneda sólo una vez. Entonces $X ~ Ber(p)$. Sus valores se definen como:
+
+  $
+    X = cases(
+      1 "en el caso de éxito",
+      0 "en el caso de fracaso"
+    )
+  $
+
+  Además, $PP(X=1) = p$ (probabilidad de éxito) y $PP(X=0) = 1-p$ (probabilidad de fracaso). El éxito puede ser, por ejemplo, "obtener cara al lanzar la moneda".
+
++ Binomial: si realizamos el experimento anterior $n$ veces, entonces $X :=$ número de éxitos en $n$ ensayos independientes. Luego, $X ~ Bin(p, n)$. La probabilidad asociada a $k$ éxitos es la siguiente:
+
+  $
+    PP(X=k) = binom(n, k) dot p^k dot (1-p)^(n-k)
+  $
+
+  Además, $EE(X) = n p$ y $var(X) = n p dot (1-p)$. 
+  
+  Si $p$ es un vector multivariado $(p_1, p_2, dots, p_n)$, se transforma en una distribución multinomial, denominada $X ~ MultBin(p, n)$.
+
 === Distribuciones continuas
-*Normal*
-$
-X ~ #normal (mu, sigma^2) \
-f(x)=1/(sqrt(2 pi sigma^2)) e^(-((x-mu)/(2 sigma^2)))
-$
-- *Normal estándar*: Si $X$ es $normal(mu, sigma^2)$ y $Z=(X-mu)/omega$ entonces $Z ~ normal(0,1)$.
-- *Chi cuadrado $chi^2$*: Si $Z~cal(N)(0,1)$ entonces 
+
++ Normal: $X ~ normal(mu, sigma^2)$. Su función de densidad es:
+
   $
-  Y=Z^2=> Y~Chi^2_[1]
+    f(x) = 1/(sqrt(2 pi sigma^2)) e^(-(x-mu)^2/(2 sigma^2)); quad x in RR
   $
-- $t$-Student. Sea $Z ~ normal(0,1)$ e $Y~Chi^2_[n]$. Entonces definimos T-Student como:
+
+  - Normal estándar: si $X ~ normal(mu, sigma^2)$ y $Z = (X-mu)\/sigma$, entonces $Z ~ normal(0, 1)$.
++ "Chi cuadrado" ($chi^2$): si $Z ~ normal(0,1)$ entonces:
+
+  $
+    Y = Z^2 -> Y ~ chi^2_[1]
+  $
+
+  donde el subíndice $[1]$ denota los grados de libertad, que es algo que se tratará en las próximas secciones.
+
++ $t$-Student: si $Z ~ normal(0,1)$ e $Y ~ chi^2_[n]$. Entonces definimos $t$-Student como:
   $
   t= Z/sqrt(Y\/n) ~ t_[n]
   $
-- *Fischer*: Combinamos dos *$Chi^2$* independientes.
-  $
-  X_1~Chi_[n_1]^2 and X_2~Chi_[n_2]^2\
-  F=(X_1\/n_1)/(X_2\/n_2)~F_(n_1,n_2)
-  $
-=== Covarianza de dos variables aleatorias.
 
-Medida de como en promedio varían linealmente dos variables aleatorias entre sí.
++ Fischer ($F$): combinamos dos $chi^2$ independientes:
+
+  $
+  X_1 ~ chi_[n_1]^2 and X_2 ~ chi_[n_2]^2 "entonces" F=(X_1\/n_1)/(X_2\/n_2)~F_(n_1,n_2)
+  $
+
+=== Covarianza de dos variables aleatorias
+
+Medida de cómo en promedio varían linealmente dos variables aleatorias entre sí.
 
 $
   cov(X,Y) &= EE[(X-EE(X))(Y-EE(Y))] \
   &= EE(X Y)-EE(X)EE(Y)
 $
 
-Si estas variable son independientes, entonces su covarianza será cero y su correlación también es cero, pero no puedo asumir que son independientes si la correlación es cero.
+Si estas variables $X, Y$ son independientes, entonces su covarianza será cero, pues $EE[X Y] = EE[X] dot EE[Y]$ por la propiedad heredada de la esperanza.
 
+#warning-box[La implicancia $cov(X, Y) = 0 => X, Y "son independientes"$ es falsa, y es un error muy común asumir que es cierta.] 
 === Correlación de dos variables aleatorias.
 
 $
@@ -151,21 +165,3 @@ $
 $
 
 Ojo: Correlación en cero no implica que serán variables aleatorias independientes, un caso clave para esto es de que estas estén relacionadas de forma no lineal (por verse en clases).
-
-#let circled_numbering = (n) => {
-  let circled_numbers = ("①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨")
-  if n >= 1 and n < 10 {
-    circled_numbers.at(n - 1)
-  } else {
-    [#n.]
-  }
-}
-
-#set enum(numbering: circled_numbering)
-
-1. Hola
-
-+ Hola qué tal
-
-+
-
