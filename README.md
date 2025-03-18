@@ -1,6 +1,6 @@
 ## 💬 Acerca de...
 
-Este proyecto se trata de un apunte **colaborativo**, es decir, su contenido se construye en tiempo real con base en las clases de cátedra dictadas en el curso MDS7101, Estadística: Teoría y Aplicaciones, del Magíster de Ciencia de Datos de la FCFM, Universidad de Chile, por la Prof. Constanza Contreras Piña.
+Este proyecto se trata de un apunte **colaborativo**, es decir, su contenido se construye en tiempo real con base en las cátedras dictadas en el curso MDS7101, Estadística: Teoría y Aplicaciones, del Magíster de Ciencia de Datos de la FCFM, Universidad de Chile, por la Prof. Constanza Contreras Piña.
 
 Los contactos de los autores de esta iniciativa son:
 
