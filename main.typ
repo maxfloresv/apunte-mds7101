@@ -160,8 +160,8 @@ Si estas variables $X, Y$ son independientes, entonces su covarianza será cero,
 #warning-box[La implicancia $cov(X, Y) = 0 => X, Y "son independientes"$ es falsa, y es un error muy común asumir que es cierta.] 
 === Correlación de dos variables aleatorias.
 
+Es una estandarización de la covarianza, para tener resultados interpretables en el rango $[-1, 1]$. Se calcula de la siguiente forma:
+
 $
   corr(X, Y) = (cov(X, Y))/sqrt(var(X) dot var(Y)) = rho(X, Y)
 $
-
-Ojo: Correlación en cero no implica que serán variables aleatorias independientes, un caso clave para esto es de que estas estén relacionadas de forma no lineal (por verse en clases).
