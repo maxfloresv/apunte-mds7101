@@ -190,9 +190,7 @@ $
 
 == Inferencia estadística
 
-#definition-box[
-  La inferencia estadística es una rama de la estadística que se encarga de hacer #keyword[predicciones] o #keyword[caracterizaciones] sobre una población a partir de una muestra.
-]
+La inferencia estadística es una rama de la estadística que se encarga de hacer #keyword[predicciones] o #keyword[caracterizaciones] sobre una población a partir de una muestra.
 
 Normalmente, habrá una variable $Y ~ f(X)$, con $f$ una función genérica llamada #keyword[modelo], que encuentra una relación. $Y$ se llama #keyword[variable endógena], porque depende de $X$. Será la variable que estudiaremos. Por otro lado, $X$ se llama #keyword[variable exógena], porque en el mundo ideal no dependen de nada.
 
@@ -202,15 +200,17 @@ Podemos decir que las estaturas distribuyen como una variable aleatoria normal, 
 
 == Estimadores
 
-En el caso anterior, no podemos conocer ni $mu$ ni $sigma$. Como habrán casos donde esto suceda, necesitamos instrumentos que "aproximen" estos valores para poder hacer la inferencia:
+#important-box[Para hacer las estimaciones, tomamos muestras aleatorias independientes e idénticamentte distribuidas (en adelante, denotado como i.i.d.). Así, la observación $i$ no depende de la $j$, y todas vienen de la misma distribución. En el curso trabajaremos sólo con distribuciones i.i.d., salvo que se diga lo contrario.]
+
+En el caso anterior, no podemos conocer ni $mu$ ni $sigma$. Como habrán casos donde esto suceda, necesitamos instrumentos que "aproximen" estos valores para poder hacer la inferencia, por ejemplo:
 
 $
-  overline(x) = 1/N dot sum_(i=1)^N x_i
+  overline(X) = 1/N dot sum_(i=1)^N X_i
 $
 
-- *¿Por qué nos gusta el promedio?* El promedio cumple con las siguientes propiedades, que hacen que sea una mejor medición estadística:
+- *¿Por qué nos gusta el promedio?* El promedio cumple con propiedades que hacen que sea un buen estimador. Una de ellas se enlista a continuación:
 
-  + Insesgadez. Sea $T(X)$ estimador del parámetro $theta$. $T(X)$ es insesgado si $EE[T(X)] = theta$. Esto significa que su valor esperado está completamente centrado en el parámetro que estoy buscando. Esta propiedad la cumple el promedio:
+  - _Insesgadez_. Sea $T(X)$ estimador del parámetro $theta$. $T(X)$ es #keyword[insesgado] si $EE[T(X)] = theta$. Esto significa que su valor esperado está completamente centrado en el parámetro que estoy buscando. Esta propiedad la cumple el promedio:
 
     $
     EE(overline(X)) &= EE(1/N dot sum_(i=1)^N X_i) \ 
@@ -227,19 +227,15 @@ $
       &= 1/N^2 dot N dot sigma^2 = bold(sigma^2/N)
     $
 
-    Queremos que la varianza sea lo más cercana a cero posible, porque esto hace que el estimador esté concentrado en el valor central. Lo malo del resultado obtenido con el promedio, es que si $N$ es muy grande, no podré estimar $sigma$ (que sigue siendo desconocido), porque $N$ tiene influencias en el resultado al estar dividiendo.
+    A propósito, queremos que la varianza sea lo más cercana a cero posible, porque esto hace que el estimador esté concentrado en el valor central. Lo malo del resultado obtenido con el promedio, es que si $N$ es muy grande, no podré estimar $sigma$ (que sigue siendo desconocido), porque $N$ tiene influencias en el resultado al estar dividiendo.
 
-    De esto, nace la necesidad de buscar un estimador insesgado de $sigma^2$. Se define como sigue:
+    De esto, nace la necesidad de buscar un estimador insesgado de $sigma^2$. La expresión que toma es la que sigue:
 
     $
-      S^2 = 1/(N-1) dot sum_(i=1)^N (X_i - overline(X))^2
+      S^2 = 1/(N-1) dot sum_(i=1)^N (X_i - overline(X))^2; quad EE(S^2) = sigma^2
     $
 
     De esta forma, ya tenemos una estimación de $sigma^2$, por lo tanto, podemos decir que $var(overline(X)) = S^2\/N$ con un error $std(overline(X)) = sqrt(S^2\/N)$.
-
-=== Muestra aleatoria
-
-Para hacer las estimaciones, tomamos muestras aleatorias independientes e idénticamentte distribuidas (en adelante, i.i.d.). Así, la observación $i$ no depende de la $j$, y todas vienen de la misma distribución. En el curso trabajaremos sólo con distribuciones i.i.d., salvo que se diga lo contrario.
 
 == Intervalos de confianza
 
@@ -269,7 +265,7 @@ Para fijar la probabilidad de que el parámetro de interés esté en el interval
 + $X ~ normal(mu, sigma^2)$, pero no conocemos $sigma^2$. Nuevamente, $overline(X) ~ normal(mu, sigma^2\/N)$. Luego, queremos conocer cómo distribuye $Z = (overline(X) - mu)\/sqrt(S^2\/N)$. Para esto, necesitamos escribir $Z$ de manera conveniente. Se escribirá de la siguiente forma:
 
   $
-    Z = (overline(X) - mu)/sqrt(sigma^2\/N) \/ (((N-1) dot S^2/sigma^2)\/ (N-1))^(1/2)
+    lr(Z = (overline(X) - mu)/sqrt(sigma^2\/N) mid(\/) sqrt(((N-1) dot S^2/sigma^2) mid(\/) (N-1)))
   $
 
   Ya sabemos que $(overline(X)-mu)\/sqrt(sigma^2\/N) ~ normal(0, 1)$. Nos falta estimar el resto. Desarrollando:
@@ -278,5 +274,9 @@ Para fijar la probabilidad de que el parámetro de interés esté en el interval
     (N-1) dot S^2/sigma^2 = 1/(N-1) sum_(i=1)^N [(X_i - overline(X))^2] dot (N-1)/sigma^2 = sum_(i=1)^N ((X_i - overline(X))/(sigma))^2
   $
 
-  y además, $(X_i - overline(X))\/sigma ~ normal(0,1)$, entonces $(N-1) dot S^2\/sigma^2 ~ chi^2_[N-1]$, pues es una normal al cuadrado con $N-1$ grados de libertad (como son i.i.d., su suma sigue distribuyendo $chi^2$ con la suma de todos sus grados de libertad). Finalmente, todo el denominador de la expresión conveniente para $Z$ distribuye como una $t$-Student de $N-1$ grados de libertad, ocupando la definición de esta variable aleatoria.
+  y además, $(X_i - overline(X))\/sigma ~ normal(0,1)$, entonces $(N-1) dot S^2\/sigma^2 ~ chi^2_[N-1]$, pues es una suma de normales al cuadrado. Finalmente, y por definición de la variable aleatoria $t$-Student, $Z$ distribuye $t_[N-1]$.
+  
+  #important-box[
+    La suma de variables $chi^2$ independientes sigue siendo $chi^2$. Los grados de libertad de la variable resultante es la suma de los grados de libertad de las variables originales.
+  ]
 
