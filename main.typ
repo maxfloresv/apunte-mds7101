@@ -167,7 +167,7 @@ $
   corr(X, Y) = (cov(X, Y))/sqrt(var(X) dot var(Y)) = rho(X, Y)
 $
 
-= Semana 2: Repaso de probabilidad
+= Semana 2: Repaso de probabilidades e inferencia estadística
 
 - Cuando decimos $corr(X,Y) = 0$, quiere decir que no hay información sobre la relación lineal entre $X$ e $Y$. Esto no quiere decir que $X$ e $Y$ sean independientes, porque pueden tener un tipo de relación no lineal, por ejemplo, cuadrática.
 
@@ -277,6 +277,6 @@ Para fijar la probabilidad de que el parámetro de interés esté en el interval
   y además, $(X_i - overline(X))\/sigma ~ normal(0,1)$, entonces $(N-1) dot S^2\/sigma^2 ~ chi^2_[N-1]$, pues es una suma de normales al cuadrado. Finalmente, y por definición de la variable aleatoria $t$-Student, $Z$ distribuye $t_[N-1]$.
   
   #important-box[
-    La suma de variables $chi^2$ independientes sigue siendo $chi^2$. Los grados de libertad de la variable resultante es la suma de los grados de libertad de las variables originales.
+    La suma de variables $chi^2$ independientes sigue siendo $chi^2$. Los grados de libertad de la variable resultante son la suma de los grados de libertad de las variables originales.
   ]
 
