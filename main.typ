@@ -199,3 +199,84 @@ Normalmente, habrá una variable $Y ~ f(X)$, con $f$ una función genérica llam
 Haremos un estudio de $X$, con una sola variable. Por ejemplo, sea $Y := "demanda por poleras"$, y $X := "tallas" ("estaturas")$. En Chile, podríamos decir que el promedio de estatura en hombres es $overline(x)_H = "1.73 m"$ y en mujeres es $overline(x)_M = "1.58 m"$. Diremos que el mínimo es $"1 m"$, y el máximo es $"2.5 m"$.
 
 Podemos decir que las estaturas distribuyen como una variable aleatoria normal, es decir, $X ~ normal(mu, sigma^2)$, porque usualmente las concentraciones de estaturas toman esta forma por naturaleza.
+
+== Estimadores
+
+En el caso anterior, no podemos conocer ni $mu$ ni $sigma$. Como habrán casos donde esto suceda, necesitamos instrumentos que "aproximen" estos valores para poder hacer la inferencia:
+
+$
+  overline(x) = 1/N dot sum_(i=1)^N x_i
+$
+
+- *¿Por qué nos gusta el promedio?* El promedio cumple con las siguientes propiedades, que hacen que sea una mejor medición estadística:
+
+  + Insesgadez. Sea $T(X)$ estimador del parámetro $theta$. $T(X)$ es insesgado si $EE[T(X)] = theta$. Esto significa que su valor esperado está completamente centrado en el parámetro que estoy buscando. Esta propiedad la cumple el promedio:
+
+    $
+    EE(overline(X)) &= EE(1/N dot sum_(i=1)^N X_i) \ 
+      &= 1/N dot sum_(i=1)^N EE(X_i) & "(linealidad)" \
+      &= 1/N dot N dot mu = bold(mu) & "(" X_i "i.i.d.)"
+    $
+
+    Definimos $var(T(X))$ como la medida de dispersión del estimador, es decir, qué tan lejos me encuentro del "centro". Para el promedio:
+
+    $
+      var(overline(X)) &= var(1/N dot sum_(i=1)^N X_i) \
+      &= 1/N^2 dot var(sum_(i=1)^N X_i) \
+      &= 1/N^2 dot sum_(i=1)^N var(X_i) & "(" X_i "i.i.d.)" \
+      &= 1/N^2 dot N dot sigma^2 = bold(sigma^2/N)
+    $
+
+    Queremos que la varianza sea lo más cercana a cero posible, porque esto hace que el estimador esté concentrado en el valor central. Lo malo del resultado obtenido con el promedio, es que si $N$ es muy grande, no podré estimar $sigma$ (que sigue siendo desconocido), porque $N$ tiene influencias en el resultado al estar dividiendo.
+
+    De esto, nace la necesidad de buscar un estimador insesgado de $sigma^2$. Se define como sigue:
+
+    $
+      S^2 = 1/(N-1) dot sum_(i=1)^N (X_i - overline(X))^2
+    $
+
+    De esta forma, ya tenemos una estimación de $sigma^2$, por lo tanto, podemos decir que $var(overline(X)) = S^2\/N$ con un error $std(overline(X)) = sqrt(S^2\/N)$.
+
+=== Muestra aleatoria
+
+Para hacer las estimaciones, tomamos muestras aleatorias independientes e idénticamentte distribuidas (en adelante, i.i.d.). Así, la observación $i$ no depende de la $j$, y todas vienen de la misma distribución. En el curso trabajaremos sólo con distribuciones i.i.d., salvo que se diga lo contrario.
+
+== Intervalos de confianza
+
+Se anotan como $"IC"(overline(X))$, $"CI"(overline(X))$ o $"C"(overline(X))$, y corresponden a un rango de valores que con cierta probabilidad contienen al parámetro de interés $theta$. Lo importante es notar que el parámetro de interés está fijo, lo que varía es justamente el intervalo de confianza.
+
+$
+  "C"(overline(X)) = overline(X) plus.minus Z_alpha dot std(overline(X))
+$
+
+El valor $Z_alpha$ es el que escojo para que con "$alpha$" nivel de confianza $mu in "C"(X)$. 
+
+$
+  PP(mu in "C"(overline(X))) &= PP(overline(X) - Z_alpha dot std(overline(X)) <= mu <= overline(X) + Z_alpha dot std(overline(X))) \
+  &= PP(-Z_alpha <= underbrace((overline(X) - mu)/(std(overline(X))), "estadístico" t) <= Z_alpha)
+$
+
+Para fijar la probabilidad de que el parámetro de interés esté en el intervalo de confianza, necesitamos saber cómo distribuye el estadístico $t$. Vamos a ver algunos ejemplos.
+
++ $X ~ normal(mu, sigma^2)$, y supondremos que conocemos $sigma^2$. Entonces $overline(X) ~ normal(mu, sigma^2 \/ N)$ por los cálculos que hicimos anteriormente. Luego,
+
+  $
+    Z ~ (overline(X) - mu)/(std(overline(X))) ~ normal(0, 1) quad "(es una normal estandarizada)"
+  $
+
+  Para una normal $normal(0, 1)$, el valor de $Z_alpha$ es aproximadamente $1.96$ para una estimación del $95 \%$ de confianza para $mu$ (o sea, $alpha = 1 - 0.95 = 0.05$). Este valor de $Z_alpha$ varía en función de la probabilidad asociada a la estimación.
+
++ $X ~ normal(mu, sigma^2)$, pero no conocemos $sigma^2$. Nuevamente, $overline(X) ~ normal(mu, sigma^2\/N)$. Luego, queremos conocer cómo distribuye $Z = (overline(X) - mu)\/sqrt(S^2\/N)$. Para esto, necesitamos escribir $Z$ de manera conveniente. Se escribirá de la siguiente forma:
+
+  $
+    Z = (overline(X) - mu)/sqrt(sigma^2\/N) \/ (((N-1) dot S^2/sigma^2)\/ (N-1))^(1/2)
+  $
+
+  Ya sabemos que $(overline(X)-mu)\/sqrt(sigma^2\/N) ~ normal(0, 1)$. Nos falta estimar el resto. Desarrollando:
+
+  $
+    (N-1) dot S^2/sigma^2 = 1/(N-1) sum_(i=1)^N [(X_i - overline(X))^2] dot (N-1)/sigma^2 = sum_(i=1)^N ((X_i - overline(X))/(sigma))^2
+  $
+
+  y además, $(X_i - overline(X))\/sigma ~ normal(0,1)$, entonces $(N-1) dot S^2\/sigma^2 ~ chi^2_[N-1]$, pues es una normal al cuadrado con $N-1$ grados de libertad (como son i.i.d., su suma sigue distribuyendo $chi^2$ con la suma de todos sus grados de libertad). Finalmente, todo el denominador de la expresión conveniente para $Z$ distribuye como una $t$-Student de $N-1$ grados de libertad, ocupando la definición de esta variable aleatoria.
+
