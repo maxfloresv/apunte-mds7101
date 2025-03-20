@@ -279,4 +279,43 @@ Para fijar la probabilidad de que el parámetro de interés esté en el interval
   #important-box[
     La suma de variables $chi^2$ independientes sigue siendo $chi^2$. Los grados de libertad de la variable resultante son la suma de los grados de libertad de las variables originales.
   ]
+Ahora, ya que se consideró que la variable aleatoria $X$ distribuye $cal(N)(mu, sigma^2)$, veamos el caso donde no distribuye normal.
 
+Para este caso, es útil utilizar una herramienta visual para descartar que su distribución sea normal, una forma es utilizando _qq-plot_ que viene a ser gráficos cuartil-cuartil que permiten comparar la distribución de la variable aleatoria con una distribución normal.
+
+Si se logra confirmar visualmente que no distribuye normal, entonces ahora queda ver la distribución del estadístico _t_.
+
+Por tanto, utilizando conceptos de teoría asintótica se puede definir la distribución de este estadístico.
+=== Conceptos de teoría asintótica
+==== Convergencia en probabilidad 
+Una secuencia de variables aleatorias $X_n$ converge en probabilidad a la variable aleatoria $X$ si para todo $epsilon>0$, su límite cumple lo siguiente:
+$
+  lim_(n=>infinity) PP(abs(X_n-X)<epsilon)=1 ==>X_n -->_p X\ p lim X_n -->X
+$
+En base a esto se puede definir una nueva propiedad para los estimadores.
+
+ _Consistencia_: Un estimador $T(X)$ del parámetro $theta$ es #keyword("consistente") si converge en probabilidad al parámetro de interés.
+ //Me falta saber como conectar bien esto
+ $
+   lim_(n=>infinity) PP(abs(T(X)-theta)<epsilon)=1
+ $
+=== Ejemplos de consistencia y sesgo
++ Estimador insesgado e inconsistente
+  $
+    T'(X)=X_1\
+    EE(T'(X))=EE(X_1)= mu
+  $
+  Dado que el estimador es la misma variable a estimar, podemos decir que es insesgado, dado que tenderá a la esperanza de la variable, no a si misma, además 
+  //Agregar mejor explicacion de los ejemplos
++ Estimador sesgado e inconsistente
+  $
+    T''(X)=c
+  
+  $
+  En este caso, al ser una constante, el valor esperado es la misma constante, por tanto cumple ser sesgado, además es inconsistente ya que ...
+
++ Estimador sesgado y consistente
+$
+  1/N sum_(i=1)^n (X_i-overline(X))^2=s'^2\
+$
+Este estimador es comunmente utilizado para estimar la varianza de un parámetro, se puede notar que es sesgado 
