@@ -1,6 +1,8 @@
 #import "utils/template.typ": *
 #import "utils/variables.typ": *
-#import "utils/packages.typ": *
+#import "@preview/theorion:0.3.3": *
+#import cosmos.fancy: *
+#show: show-theorion
 
 #page(
   paper: "us-letter",
@@ -198,7 +200,7 @@ Haremos un estudio de $X$, con una sola variable. Por ejemplo, sea $Y := "demand
 
 Podemos decir que las estaturas distribuyen como una variable aleatoria normal, es decir, $X ~ normal(mu, sigma^2)$, porque usualmente las concentraciones de estaturas toman esta forma por naturaleza.
 
-== Estimadores
+== Estimadores <estimators>
 
 #important-box[Para hacer las estimaciones, tomamos muestras aleatorias independientes e idénticamentte distribuidas (en adelante, denotado como i.i.d.). Así, la observación $i$ no depende de la $j$, y todas vienen de la misma distribución. En el curso trabajaremos sólo con distribuciones i.i.d., salvo que se diga lo contrario.]
 
@@ -279,43 +281,88 @@ Para fijar la probabilidad de que el parámetro de interés esté en el interval
   #important-box[
     La suma de variables $chi^2$ independientes sigue siendo $chi^2$. Los grados de libertad de la variable resultante son la suma de los grados de libertad de las variables originales.
   ]
-Ahora, ya que se consideró que la variable aleatoria $X$ distribuye $cal(N)(mu, sigma^2)$, veamos el caso donde no distribuye normal.
 
-Para este caso, es útil utilizar una herramienta visual para descartar que su distribución sea normal, una forma es utilizando _qq-plot_ que viene a ser gráficos cuartil-cuartil que permiten comparar la distribución de la variable aleatoria con una distribución normal.
++ $X$ no distribuye $cal(N)(mu, sigma^2)$. Para este caso, es útil emplear una herramienta visual para descartar que su distribución se comporte de forma parecida a una normal. Una manera es usando un _Q-Q Plot_ que compara cuantil a cuantil una distribución empírica con una teórica. En este caso, la distribución empírica es $X$, y la teórica sería una normal.
 
-Si se logra confirmar visualmente que no distribuye normal, entonces ahora queda ver la distribución del estadístico _t_.
+  En la @qqplot que se muestra a continuación, mientras más cerca esté la línea de puntos azul de la recta, más parecidas son las distribuciones empírica y teórica. Estos roles los toman $X$ y $cal(N)(mu, sigma^2)$ respectivamente en el caso que estamos estudiando.
 
-Por tanto, utilizando conceptos de teoría asintótica se puede definir la distribución de este estadístico.
-=== Conceptos de teoría asintótica
-==== Convergencia en probabilidad 
+  #figure(
+    caption: [Visualización simplificada de un _Q-Q Plot_.],
+    image("images/classes/qqplot.svg", width: 70%)
+  ) <qqplot>
+
+  Si se logra confirmar visualmente que no distribuye normal, debemos buscar otras estrategias para entender la distribución del estadístico _t_. En este punto, introduciremos la teoría asintótica, que se definirá en la siguiente sección (@asymptotic-theory).
+
+== Teoría asintótica <asymptotic-theory>
+
+=== Convergencia en probabilidad
+
 Una secuencia de variables aleatorias $X_n$ converge en probabilidad a la variable aleatoria $X$ si para todo $epsilon>0$, su límite cumple lo siguiente:
-$
-  lim_(n=>infinity) PP(abs(X_n-X)<epsilon)=1 ==>X_n -->_p X\ p lim X_n -->X
-$
-En base a esto se puede definir una nueva propiedad para los estimadores.
 
- _Consistencia_: Un estimador $T(X)$ del parámetro $theta$ es #keyword("consistente") si converge en probabilidad al parámetro de interés.
- //Me falta saber como conectar bien esto
+$
+  lim_(n->infinity) PP(abs(X_n-X)<epsilon)=1
+$
+
+Esto se anotará como $X_n scripts(->)_(PP) X$ ó $scripts("plim")_(n -> infinity) X_n = X$.
+
+#note-box[
+  En la mayoría de los _datasets_ actuales se tiene que "$n -> infinity$", porque en la estadística clásica, un $n = 30$ ya era considerado muy grande. Esto es porque una $t$-Student con $30$ grados de libertad se empieza a parecer a una normal estándar en distribución.
+]
+
+Basándose en esto se puede definir una nueva propiedad para los estimadores, que extiende la propiedad de insesgadez que se vio en la @estimators:
+
+- _Consistencia_: Un estimador $T(X_n)$ del parámetro $theta$ es #keyword("consistente") si converge en probabilidad al parámetro de interés, es decir:
  $
-   lim_(n=>infinity) PP(abs(T(X)-theta)<epsilon)=1
+   lim_(n->infinity) PP(abs(T(X_n)-theta)<epsilon)=1
  $
-=== Ejemplos de consistencia y sesgo
-+ Estimador insesgado e inconsistente
+
+=== Ejemplos de sesgo y consistencia
+
+Un estimador puede ser insesgado y no consistente, o tener otro tipo de variaciones. A continuación, se enlistan ejemplos que dan cuenta de estas variaciones:
+
++ Estimador insesgado e inconsistente:
+
   $
-    T'(X)=X_1\
-    EE(T'(X))=EE(X_1)= mu
+    T'(X) = X_1 space and space EE(T'(X)) = EE(X_1) = mu
   $
-  Dado que el estimador es la misma variable a estimar, podemos decir que es insesgado, dado que tenderá a la esperanza de la variable, no a si misma, además 
-  //Agregar mejor explicacion de los ejemplos
-+ Estimador sesgado e inconsistente
+
+  Este estimador de $mu$ es insesgado, porque su esperanza es igual al parámetro estimado, sin embargo, al aumentar la muestra ($n -> infinity$), el valor de $T'(X)$ no cambia, sigue siendo aleatorio e igual a $X_1$. Al ser un valor aleatorio, esto no se acerca una distancia arbitraria $epsilon > 0$ a $mu$ en el límite.
+
++ Estimador sesgado e inconsistente:
+
   $
-    T''(X)=c
+    T''(X) = c in RR, c != theta
+  $
   
-  $
-  En este caso, al ser una constante, el valor esperado es la misma constante, por tanto cumple ser sesgado, además es inconsistente ya que ...
+  En este caso, al ser una constante, el valor esperado es la misma constante (distinta de $theta$), por lo tanto, cumple ser sesgado. Por otro lado, es inconsistente, ya que la sucesión siempre está concentrada en $c$, lo que hace imposible que esté centrado en $theta$, que es lo que se busca con el límite.
 
-+ Estimador sesgado y consistente
++ Estimador sesgado y consistente:
+
+  $
+    S'^2 = 1/N sum_(i=1)^N (X_i-overline(X))^2; space EE(S'^2) = sigma^2 - sigma^2/N != sigma^2
+  $
+
+  Este estimador tiene sesgo, porque su valor esperado no es igual al parámetro estimado $sigma^2$. Sin embargo, es consistente, porque converge en probabilidad al parámetro de interés. Esto último se confirma porque el sesgo es $-sigma^2\/N$, que tiende a $0$ cuando $N -> infinity$.
+
+=== Caracterización de la consistencia
+
+Si $T(X_n)$ es estimador insesgado de $theta$, es decir, $E(T(X_n)) = theta$, y además $var(T(X_n)) -> 0$ cuando $n -> infinity$, entonces $T(X_n)$ es un estimador consistente de $theta$. Matemáticamente:
+
 $
-  1/N sum_(i=1)^n (X_i-overline(X))^2=s'^2\
+  T(X_n) "insesgado" and var(T(X_n)) -> 0 ==> T(X_n) "consistente"
 $
-Este estimador es comunmente utilizado para estimar la varianza de un parámetro, se puede notar que es sesgado 
+
+
+Por ejemplo, el promedio es un estimador consistente de $mu$, porque es un estimador insesgado ($E(overline(X)) = mu$), y además $var(overline(X)) = sigma^2\/N -> 0$ cuando $N -> infinity$.
+
+=== Ley de los Grandes Números
+
+Sea ${X_i}_(i in NN)$ una muestra i.i.d. con $E(X_i) = mu < infinity$ y $var(X_i) = sigma^2 < infinity$ para todo $i in NN$. La Ley de los Grandes Números (también llamada LGN) establece que: 
+$
+  overline(X_n) = 1/n dot sum_(i=1)^n X_i
+$
+es un estimador consistente de $mu$, es decir, $overline(X_n) ->_(PP) mu$.
+
+=== Convergencia en distribución
+
+Sea $X_n$ es una secuencia de variables aleatorias con $X_n ~ f_n (dot)$, y además $X ~ f(dot)$. Si para cada $x$ donde $f(x)$ es continua se cumple que $f_n (x) ->_(n -> infinity) f(x)$ entonces decimos que $X_n$ converge en distribución a $X$, anotado $X_n ->_d X$.

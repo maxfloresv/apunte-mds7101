@@ -1,4 +1,4 @@
-#let std(va) = [`STD`$(#va)$]
+#let std(va) = $"STD"(#va)$
 #let var(X) = $VV"ar"(#X)$
 #let cov(X, Y) = $CC"ov"(#X, #Y)$
 #let corr(X, Y) = $"Corr"(#X, #Y)$
