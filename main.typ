@@ -4,21 +4,9 @@
 #import cosmos.fancy: *
 #show: show-theorion
 
-#page(
-  paper: "us-letter",
-  header: none,
-  footer: none,
-  margin: 0pt,
-  image("images/cover.svg")
-)
-
-#show: outline-rules
-
-#outline()
-
 #show: main-rules
 
-= Semana 1: Repaso de probabilidades.
+= Repaso de probabilidades
 
 - *¿Qué es una probabilidad?* Una probabilidad es una medida de incertidumbre.
 
@@ -161,7 +149,7 @@ Si estas variables $X, Y$ son independientes, entonces su covarianza será cero,
 
 #warning-box[La implicancia $cov(X, Y) = 0 => X, Y "son independientes"$ es falsa, y es un error muy común asumir que es cierta.] 
 
-== Correlación de dos variables aleatorias.
+== Correlación de dos variables aleatorias
 
 Es una estandarización de la covarianza, para tener resultados interpretables en el rango $[-1, 1]$. Se calcula de la siguiente forma:
 
@@ -169,40 +157,38 @@ $
   corr(X, Y) = (cov(X, Y))/sqrt(var(X) dot var(Y)) = rho(X, Y)
 $
 
-= Semana 2: Repaso de probabilidades e inferencia estadística
+= Repaso de probabilidades e inferencia estadística
 
-- Cuando decimos $corr(X,Y) = 0$, quiere decir que no hay información sobre la relación lineal entre $X$ e $Y$. Esto no quiere decir que $X$ e $Y$ sean independientes, porque pueden tener un tipo de relación no lineal, por ejemplo, cuadrática.
+Cuando decimos $corr(X,Y) = 0$, quiere decir que no hay información sobre la relación lineal entre $X$ e $Y$. Esto no quiere decir que $X$ e $Y$ sean independientes, porque pueden tener un tipo de relación no lineal, por ejemplo, cuadrática.
 
-  - Ejemplo: Sea $X ~ "U"[-1, 1]$ e $Y = X^2$, con $"U"(a,b)$ una distribución uniforme. Como los momentos de una variable $Z$ que distribuye uniformemente en el intervalo $(a, b)$ se calculan mediante la expresión:
+#example[Sea $X ~ "U"[-1, 1]$ e $Y = X^2$, con $"U"(a,b)$ una distribución uniforme. Como los momentos de una variable $Z$ que distribuye uniformemente en el intervalo $(a, b)$ se calculan mediante la expresión:
 
-    $
-      EE(Z^n) = (b^(n+1)-a^(n+1))/((n+1) dot (b-a))
-    $
+  $
+    EE(Z^n) = (b^(n+1)-a^(n+1))/((n+1) dot (b-a))
+  $
 
-    y $X$ es uniforme en el intervalo $[-1, 1]$, entonces su primer momento, $EE(X)$, es nulo. Además, $EE(X^3) = 0$. Esta última expresión nos sirve para deducir la contradicción, pues:
+  y $X$ es uniforme en el intervalo $[-1, 1]$, entonces su primer momento, $EE(X)$, es nulo. Además, $EE(X^3) = 0$. Esta última expresión nos sirve para deducir la contradicción, pues:
 
-    $
-      cov(X, Y) &= EE(X Y) - EE(X) dot EE(Y) \
-      &= EE(X Y) \
-      &= EE(X dot X^2) \
-      &= EE(X^3) = bold(0) 
-    $
+  $
+    cov(X, Y) &= EE(X Y) - EE(X) dot EE(Y) \
+    &= EE(X Y) \
+    &= EE(X dot X^2) \
+    &= EE(X^3) = bold(0) 
+  $
 
-    pero $Y$ sí depende de $X$, entonces no pueden ser independientes.
+  pero $Y$ sí depende de $X$, entonces no pueden ser independientes.]
 
 == Inferencia estadística
 
-La inferencia estadística es una rama de la estadística que se encarga de hacer #keyword[predicciones] o #keyword[caracterizaciones] sobre una población a partir de una muestra.
+La inferencia estadística es una rama de la estadística que se encarga de hacer predicciones o caracterizaciones sobre una población a partir de una muestra.
 
-Normalmente, habrá una variable $Y ~ f(X)$, con $f$ una función genérica llamada #keyword[modelo], que encuentra una relación. $Y$ se llama #keyword[variable endógena], porque depende de $X$. Será la variable que estudiaremos. Por otro lado, $X$ se llama #keyword[variable exógena], porque en el mundo ideal no dependen de nada.
+Normalmente, habrá una variable $Y ~ f(X)$, con $f$ una función genérica llamada modelo, que encuentra una relación. $Y$ se llama variable endógena, porque depende de $X$. Será la variable que estudiaremos. Por otro lado, $X$ se llama variable exógena, porque en el mundo ideal no depende de nada.
 
-Haremos un estudio de $X$, con una sola variable. Por ejemplo, sea $Y := "demanda por poleras"$, y $X := "tallas" ("estaturas")$. En Chile, podríamos decir que el promedio de estatura en hombres es $overline(x)_H = "1.73 m"$ y en mujeres es $overline(x)_M = "1.58 m"$. Diremos que el mínimo es $"1 m"$, y el máximo es $"2.5 m"$.
-
-Podemos decir que las estaturas distribuyen como una variable aleatoria normal, es decir, $X ~ normal(mu, sigma^2)$, porque usualmente las concentraciones de estaturas toman esta forma por naturaleza.
+#example[
+  Definimos las variables aleatorias $Y :=$ demanda por poleras, y $X :=$ tallas (estaturas). Acá surge naturalmente un problema: necesitamos estudiar más a fondo el caso, pues nunca conoceremos la media o desviación estándar exacta de la población. Para esto, definiremos una herramienta que se verá en la @estimators.
+]
 
 == Estimadores <estimators>
-
-#important-box[Para hacer las estimaciones, tomamos muestras aleatorias independientes e idénticamentte distribuidas (en adelante, denotado como i.i.d.). Así, la observación $i$ no depende de la $j$, y todas vienen de la misma distribución. En el curso trabajaremos sólo con distribuciones i.i.d., salvo que se diga lo contrario.]
 
 En el caso anterior, no podemos conocer ni $mu$ ni $sigma$. Como habrán casos donde esto suceda, necesitamos instrumentos que "aproximen" estos valores para poder hacer la inferencia, por ejemplo:
 
@@ -239,15 +225,17 @@ $
 
     De esta forma, ya tenemos una estimación de $sigma^2$, por lo tanto, podemos decir que $var(overline(X)) = S^2\/N$ con un error $std(overline(X)) = sqrt(S^2\/N)$.
 
+#important-box[Para hacer las estimaciones, tomamos muestras aleatorias independientes e idénticamentte distribuidas (en adelante, denotado como i.i.d.). Así, la observación $i$ no depende de la $j$, y todas vienen de la misma distribución. En el curso trabajaremos sólo con distribuciones i.i.d., salvo que se diga lo contrario.]    
+
 == Intervalos de confianza
 
-Se anotan como $"IC"(overline(X))$, $"CI"(overline(X))$ o $"C"(overline(X))$, y corresponden a un rango de valores que con cierta probabilidad contienen al parámetro de interés $theta$. Lo importante es notar que el parámetro de interés está fijo, lo que varía es justamente el intervalo de confianza.
+Se anotan como $"IC"(X)$, $"CI"(X)$ o $"C"(X)$, siendo esta última la notación que usaremos en este apunte, y corresponden a un rango de valores que con cierta probabilidad contienen al parámetro de interés $theta$. En el caso particular de la media muestral, es decir, $"C"(overline(X))$, queremos capturar $mu$. Lo importante es notar que el parámetro de interés está fijo, lo que varía es justamente el intervalo de confianza.
 
 $
   "C"(overline(X)) = overline(X) plus.minus Z_alpha dot std(overline(X))
 $
 
-El valor $Z_alpha$ es el que escojo para que con "$alpha$" nivel de confianza $mu in "C"(X)$. 
+El valor $Z_alpha$ es el que escojo para que con "$alpha$" nivel de confianza $mu in "C"(overline(X))$. 
 
 $
   PP(mu in "C"(overline(X))) &= PP(overline(X) - Z_alpha dot std(overline(X)) <= mu <= overline(X) + Z_alpha dot std(overline(X))) \
@@ -352,10 +340,9 @@ $
   T(X_n) "insesgado" and var(T(X_n)) -> 0 ==> T(X_n) "consistente"
 $
 
-
 Por ejemplo, el promedio es un estimador consistente de $mu$, porque es un estimador insesgado ($E(overline(X)) = mu$), y además $var(overline(X)) = sigma^2\/N -> 0$ cuando $N -> infinity$.
 
-=== Ley de los Grandes Números
+=== Ley de los Grandes Números (LGN)
 
 Sea ${X_i}_(i in NN)$ una muestra i.i.d. con $E(X_i) = mu < infinity$ y $var(X_i) = sigma^2 < infinity$ para todo $i in NN$. La Ley de los Grandes Números (también llamada LGN) establece que: 
 $
@@ -363,6 +350,306 @@ $
 $
 es un estimador consistente de $mu$, es decir, $overline(X_n) ->_(PP) mu$.
 
+
 === Convergencia en distribución
 
-Sea $X_n$ es una secuencia de variables aleatorias con $X_n ~ f_n (dot)$, y además $X ~ f(dot)$. Si para cada $x$ donde $f(x)$ es continua se cumple que $f_n (x) ->_(n -> infinity) f(x)$ entonces decimos que $X_n$ converge en distribución a $X$, anotado $X_n ->_d X$.
+Sea $X_n$ es una secuencia de variables aleatorias con $X_n ~ f_n (dot)$, y además $X ~ f(dot)$. Si para cada $x$ donde $f(x)$ es continua se cumple que $f_n (x) -->_(n -> infinity) f(x)$ entonces decimos que $X_n$ converge en distribución a $X$, anotado $X_n ->_d X$. En palabras coloquiales, esta es una convergencia de histogramas.
+
+= Teoría asintótica e introducción al test de hipótesis
+
+== Teorema Central del Límite (TCL) <tcl>
+
+Sea ${X_i}_(i=1)^N$ una muestra aleatoria i.i.d. con $EE(X_i) = mu < infinity$ y $var(X_i) = sigma^2 < infinity$ para todo $i in {1, 2, dots, N}$. Entonces:
+
+$
+  & 1/N dot sum_(i=1)^N (X_i - mu) ->_d normal(0, sigma^2) \
+  ==>& (overline(X_n) - mu)/(sigma\/sqrt(N)) ->_d normal(0, 1)
+$
+
+donde $sigma\/sqrt(N)$ es la varianza de la variable aleatoria $overline(X_n)$.
+
+
+La "gracia" de este teorema es que no importa cómo distribuyan las variables aleatorias ${X_i}_(i=1)^N$, siempre y cuando cumplan con las condiciones del TCL, la suma de ellas se comportará como una normal estándar. Una consecuencia directa es que cuando tenemos muestras grandes, podemos calcular los intervalos de confianza usando una $normal(0,1)$, dado que el estadístico $t$ converge a dicha distribución.
+
+== Test de hipótesis <hypothesis-test>
+
+El test de hipótesis es una herramienta clave en la inferencia estadística que nos ayuda a decidir si los datos muestrales proporcionan suficiente evidencia para apoyar una determinada afirmación sobre la población.
+
+Realizaremos el siguiente experimento para hacer comparaciones: escogemos $N=30$ personas con COVID, divididas en dos grupos de $N_1=N_2=15$ personas. A un grupo le damos un medicamento y al otro un placebo, para anular el efecto psicológico. Luego, medimos los días que se demoró cada paciente en recuperarse. Los resultados del promedio por grupo son:
+
+$
+  overline(X_1) = 3.5 "días" quad and quad overline(X_2) = 4.5 "días"
+$
+
+Una pregunta que surge naturalmente es: ¿podemos afirmar que el medicamento es efectivo? La respuesta es no, porque a pesar de que puedo hacer que las muestras sean altamente homogéneas, siempre habrán factores que no podemos controlar, por ejemplo, situaciones personales de cada paciente, medicamentos extras que no fueron informados, etc. Para enfrentar esta problemática, se definen las siguientes herramientas matemáticas:
+
+- Hipótesis nula ($H_0$): Plantea que "no existe un efecto", y se asume que es cierta hasta que tengamos evidencia suficiente para rechazar esta afirmación Afecta el tipo de experimento o procedimiento, y los datos que son recopilados.
+
+  #example[
+    *Efectividad de la urgencia de un hospital.* Están las readmisiones, muertes hospitalarias, y la duración de la estadía. Si uno mira estos indicadores, suelen ser altos, entonces una conclusión apresurada sería decir que la urgencia funciona mal. Esto no necesariamente es cierto, porque los pacientes que entran a urgencia ya vienen con una situación grave previa.
+  ]
+
+- Hipótesis alternativa ($H_A$ ó $H_1$). Corresponde a lo opuesto a la hipótesis nula, pues representa la existencia de un efecto. Generalmente, es lo que queremos demostrar.
+
+== $p$-valor
+  
+El $p$-valor corresponde a la probabilidad de que bajo la hipótesis nula los datos muestren la diferencia que observo. Con el ejemplo de la @hypothesis-test, esta "diferencia observada" sería el día adicional que tardó el segundo grupo en recuperarse. Un $p$-valor cercano a $0$ diría que la probabilidad de observar una diferencia de un día, siendo que el medicamento no es efectivo, es muy baja.
+
+Para realizar conclusiones, se suele fijar un umbral que usualmente es $p_"lím"=0.05$. Si el $p$-valor es menor a $p_"lím"$, se habla de la existencia de #keyword[significancia estadística]. Si el $p$-valor es mayor a $p_"lím"$, se dice que no hay significancia estadística. Para el caso $p=p_"lím"$ podemos decir que hay o no hay significancia dependiendo de cómo se realizó el experimento, dado que este umbral se fija de manera arbitraria.
+
+Si tenemos significancia estadística, se rechaza la hipótesis nula $H_0$, es decir, puedo descartar que el medicamento no sea efectivo porque el experimento es riguroso. Si no hay significancia estadística, no se puede rechazar la hipótesis nula, y se dice que no hay evidencia suficiente para afirmar que el medicamento es efectivo.
+
+En la @p-value se puede ver la representación gráfica de un $p$-valor. Matemáticamente, corresponde al área bajo la curva que *TODO*... También $f(overline(X) bar H_0)$ representa la curva de distribución para el caso donde el medicamento es inefectivo, y $f(overline(X) bar H_A)$ donde es efectivo.
+
+#figure(image("images/classes/p_value.svg", width: 80%), caption: [Representación gráfica de un $p$-valor.]) <p-value>
+
+#warning-box[
+  Al rechazar la hipótesis nula, estamos aseverando que existe significancia estadística para decir que el medicamento es efectivo, sin embargo, como veremos en la @neyman-pearson, existe una pequeña probabilidad de cometer un error, y está asociada al factor $alpha$ que escogimos.
+]
+
+== Teorema de Neyman-Pearson <neyman-pearson>
+
+Establece una significancia $alpha$ que usualmente varía en el rango $[0.01, 0.05]$. Se definen los errores de tipo $1$ y $2$ como se ilustra en la @table-neyman-pearson de a continuación:
+
+#figure(table(
+  columns: 3,
+  rows: auto,
+  [Decisión], [$H_0$], [$H_A$],
+  [$H_0$], {
+    set text(fill: rgb("#046d04")) 
+    [\u{2713}]
+  }, [Error "Tipo $2$" ($beta$)],
+  [$H_A$], [Error "Tipo $1$" ($alpha$)], {
+    set text(fill: rgb("#046d04")) 
+    [\u{2713}]
+  }
+), caption: [Tabla de decisiones para el test de hipótesis.]) <table-neyman-pearson>
+
+En esencia, si tenemos un $p$-valor menor a $alpha$, se rechaza la hipótesis nula, pues hay significancia estadística. Si el $p$-valor es mayor a $alpha$, no se puede rechazar la hipótesis nula. En este caso, el error tipo $1$ ($alpha$) corresponde a rechazar la hipótesis nula cuando es cierta, y el error tipo $2$ ($beta$) corresponde a no rechazar la hipótesis nula cuando es falsa.
+
+
+
+== Tests clásicos
+
+=== Test de diferencia de medias
+
+El test de diferencia de medias, también denominado $t$-test, formula las siguientes hipótesis:
+
+$
+  H_0 &: mu_X = mu_Y \
+  H_A &: mu_X != mu_Y
+$
+
+Asumimos que $X ~ normal(mu_X, sigma_X^2)$ e $Y ~ normal(mu_Y, sigma_Y^2)$. De estas variables aleatorias se generan las muestras aleatorias ${X_i}_(i=1)^N$ y ${Y_i}_(i=1)^M$, y además $sigma_X^2 = sigma_Y^2 = sigma^2$. Por otro lado, el estadístico $t$ se define como:
+
+$
+  t = (overline(X) - overline(Y))/(S_P dot sqrt(1\/N + 1\/M))
+$
+
+donde $S_P$ define una expresión que se genera a partir del estimador de la varianza de la diferencia de medias.
+
+Para la hipótesis nula, es equivalente decir $H_0: overline(X)=overline(Y) <==> H_0: overline(X)-overline(Y)=0$. Esta diferencia distribuye como una resta de normales:
+
+$
+  overline(X)-overline(Y) ~ normal(mu_X - mu_Y #keyword[\= 0], sigma^2 dot (1/N + 1/M)) & "(hipótesis del test)"
+$
+
+La varianza de la resta se calcula de la siguiente forma, dado que son variables aleatorias i.i.d.:
+
+$
+  var(overline(X)-overline(Y)) = var(overline(X)) + var(overline(Y)) = sigma_X^2/N + sigma_Y^2/M = sigma^2 dot (1/N + 1/M)
+$
+
+Si $sigma^2$ es conocido, entonces podemos decir que:
+
+$
+  Z = (overline(X)-overline(Y) #keyword[-0])/(sigma dot sqrt(1\/N + 1\/M)) ~ normal(0, 1)
+$
+
+Pero como no lo conocemos, debemos estimar el parámetro. Como recuerdo, el estimador insesgado de la varianza es:
+
+$
+  S^2 = 1/(N-1) dot sum_(i=1)^N (X_i - overline(X))^2
+$
+
+Sin embargo, sabemos que $sigma_X^2 = sigma_Y^2$, entonces podemos decir que:
+
+$
+  S_P^2 &= 1/(N+M-2) dot (sum_(i=1)^N (X_i - overline(X))^2 + sum_(j=1)^M (Y_j - overline(Y))^2) \
+  &= 1/(N+M-2) dot ((N-1) dot S_X^2 + (M-1) dot S_Y^2)
+$
+
+Haciendo la transformación que vimos en intervalos de confianza:
+
+$
+  t ~ lr(normal(0,1) mid(\/) sqrt(chi^2_[N+M-2]/(N+M-2)) = t_[N+M-2])
+$
+
+Es decir, $t$ distribuye como una $t$-Student de $N+M-2$ grados de libertad.
+
+Hay tres formas de analizar un test de hipótesis, y todas son equivalentes:
+
++ Comparar $t$ con el valor tabulado de la distribución.
+
+  - #example[Si $alpha=0.05$, debo buscar el valor para $alpha\/2 = 0.025$ en la _tail probability_ y $N+M-2$ grados de libertad, dado que el test de diferencia de media es de $2$ colas. Si $t$ es mayor que el valor tabulado, se rechaza la hipótesis nula. Si $t$ es menor que el valor tabulado, no se puede rechazar la hipótesis nula.
+
+    #note-box[  
+      La hipótesis nula manda en la elección de la cantidad de colas ($1$ ó $2$). Si se prueba la diferencia de dos promedios, es un test de $2$ colas. Si uno es mayor que el otro, es una cola.
+    ]]
+
++ Calcular el $p$-valor y comparar con $alpha$.
+
++ Mirar el intervalo de confianza $"C"(overline(X)-overline(Y)) = overline(X)-overline(Y) plus.minus Z_alpha dot std(overline(X)-overline(Y))$
+
+  - #example[¿Qué pasa si el intervalo de confianza del $95 \%$ no contiene el $0$? Entonces, se rechaza la hipótesis nula, porque esta asumía que la diferencia de medias era $0$. Si el intervalo de confianza contiene el $0$, no se puede rechazar la hipótesis nula.]
+
+Si rechazamos la hipótesis nula, entonces podemos aseverar que hay una diferencia de medias significativa entre los grupos.
+
+=== Test de diferencia en proporciones
+
+Sea $p_i$ la probabilidad de éxito en la $i$-ésima población. Se define la hipótesis nula como:
+
+$
+  H_0: p_1 = p_2 <==> H_0: p_1 - p_2 = 0
+$
+
+Y se define $X_i = "n.° éxitos"\/"total de la muestra"$ con $EE[X_i] = n p$ para todo $i$. Bajo $H_0$, tenemos que $p_1=p_2=p$, y $var(hat(p_i)) = p dot (1-p)\/n_i$, con $hat(p_i) = X_i\/n_i$ (símil a $overline(X)$, pero en proporción)  y $hat(p) = (X_1+X_2)\/(n_1+n_2)$.  Entonces:
+
+$
+  Z = (hat(p_1) - hat(p_2))/sqrt(p dot (1-p) dot (1\/n_1+1\/n_2)) ~ normal(0, 1)
+$
+
+cuando $n_1$ y $n_2$ tienden a infinito.
+
+= Ejemplos de tests de hipótesis
+
+En la sección previa, vimos que nos interesa hacer comparaciones entre dos variables aleatorias.
+
+Estructura del test de hipótesis:
+
+- $H_0$ (hipótesis nula): declaro lo que no quiero que pase.
+
+- $H_A$ ó $H_1$ (hipótesis alternativa): declaro lo contrario a la hipótesis nula.
+
++ $t$-test: $H_0 = overline(X_1) = overline(X_2)$.
+
++ #underline[Supuestos.] Un ejemplo es el siguiente: "las variables aleatorias distribuyen $normal$ y sus varianzas son iguales".
+
++ Estadístico y ver cómo distribuye bajo $H_0$, es decir, se asume que la hipótesis nula es cierta. Dicho de otra forma, se asume que no hay efecto.
+
++ Fijar nivel de significancia y comparar con $"C"(overline(X))$, el $p$-valor, o el valor de tabla $Z_alpha$.
+
+== Tipos de tests de hipótesis
+
+Existen los test de hipótesis paramétricos y no paramétricos. Los tests de hipótesis paramétricos se usan cuando se conoce la distribución de las variables y se puede hacer inferencia sobre sus parámetros. Por ejemplo: $t$-test, test de diferencia en varianzas ($F$-Fisher), y ANOVA.
+
+Por otro lado, los tests de hipótesis no paramétricos ("distribution-free test") son los que se hacen cuando no conocemos las distribuciones, o no se quiere hacer supuestos sobre las distribuciones. Por ejemplo, Mann-Whitney (U-test), Kruskal-Kallis (H-test), y Kolmogorov-Smirnov (KS-test).
+
+=== Test de hipótesis conjunta
+
+Se dice que un test es de hipótesis conjunta si tiene más de una restricción lineal. Por ejemplo, el siguiente test cumple esta condición:
+
+$
+  H_0:& beta_1 = 0 \
+  &beta_2 + beta_3 = 1
+$
+
+Esto es equivalente a decir $H_0: beta_1 = 0 and beta_2 + beta_3 = 1$, es decir, tenemos $2$ restricciones lineales. La hipótesis alternativa $H_A$ es la negación lógica de $H_0$. Tener más de una hipótesis nos hace siempre conectarla con un "y lógico", pues se trata de un conjunto de restricciones.
+
+Estas hipótesis se pueden escribir como una ecuación matricial:
+
+$
+  H_0&: R dot bold(beta) = bold(r) \
+  H_A&: R dot bold(beta) != bold(r)
+$
+
+Por ejemplo, usando el ejemplo anterior:
+
+$
+  underbrace(mat(
+    1, 0, 0;
+    0, 1, 1 
+  ), R) dot underbrace(mat(beta_1; beta_2; beta_3), bold(beta)) = underbrace(mat(0; 1), bold(r))
+$
+
+Cuando rechazo $H_0$, se puede concluir que al menos una de las hipótesis no es cierta estadísticamente.
+
+=== ANOVA
+
+La idea de este test es extender el $t$-test, o test de diferencia de medias, a más de dos grupos.
+
+#example[
+  Supongamos que queremos testear la efectividad de un medicamento. Tenemos $16$ regiones, y a cada una le envío el medicamento. Tenemos $I$ grupos ${1, dots, I}$ y $J$ observaciones ${1, dots, J}$, y además definimos $Y_(i j) : "Observación" j "del grupo" i$. Esta variable se define como:
+
+  $
+    Y_(i j) = mu + alpha_i + epsilon_(i j)
+  $
+
+  donde $mu$ es la media poblacional, $alpha_i$ es el efecto de estar en el grupo $i$, y $epsilon_(i j)$ son los "no observables", por ejemplo, factores externos no considerados.
+
+  Nuestra hipótesis nula se define como sigue:
+
+  $
+    H_0:& alpha_0 = alpha_1 = alpha_2 = dots = alpha_I = 0
+  $
+
+  Aparte, se define $overline(Y)_(dot, dot)$ como el promedio sobre todo $i$ y sobre todo $j$, e $overline(Y)_(i, dot)$ como el promedio sobre $j$ del grupo $i$. El punto del subíndice denota que ese índice se mueve sobre todo el rango que abarca.
+
+  Tenemos que considerar la "varianza" intragrupal (SSW) e intergrupal (SSB):
+  
+  $
+    "SSW" &= sum_(i=1)^I sum_(j=1)^J (Y_(i j) - overline(Y)_(i, dot))^2 \
+    "SSB" &= J dot sum_(i=1)^I (overline(Y)(i, dot) - overline(Y)(dot, dot))
+  $
+
+  A partir de esto, comparamos la varianza intragrupal con la intergrupal, y obtenemos el estadístico $F$ que se define como sigue:
+
+  $
+    F = ("SSB"\/(I-1))/("SSW"\/(I dot (J-1))) ~ F_(alpha, I-1, I dot (J-1))
+  $
+
+  Para rechazar o no rechazar la hipótesis nula, tenemos que ver qué tan lejos está $F$ de $1$. Si $F >> 1$, la rechazamos, porque quiere decir que la varianza intergrupo es mucho más grande, o sea, existe al menos una población que obtuvo efectos distintos con el medicamento a las demás.
+]
+
+=== Boxplot
+
+Es un gráfico que me permite ver la distribución de una muestra, dividida por sus cuartiles. En el ejemplo anterior, este instrumento me permite caracterizar las poblaciones y los efectos que tiene el medicamento sobre ellas, y esto permite determinar cuáles son las poblaciones que son distintas a las demás en el caso $F >> 1$. 
+
+Los distintos elementos que componen un _boxplot_, para $3$ grupos $G_1$, $G_2$ y $G_3$, se pueden ver en la @boxplot de a continuación:
+
+#figure(image("images/classes/boxplot.svg", width: 70%), caption: [Representación gráfica de un _boxplot_.]) <boxplot>
+
+#note-box[
+  Un gráfico similar para ver la distribución de los datos es el _violinplot_. Lo importante es que está implementado en librerías populares de visualización de información como `seaborn` en Python.
+]
+
+=== Test de Kolmogorov-Smirnov
+
+Este test se ocupa para ver si dos muestras empíricas se parecen o no. Esto permite, por ejemplo, hacer clasificaciones binarias. Su estadístico, $D_(n,m)$, se define como sigue:
+
+$
+  D_(n, m) = sup_x abs(F_(1,n) (x) - F_(2,m) (x))
+$
+
+donde $F_(1,n)$ es una distribución empírica acumulada (CDF) con una muestra de tamaño $n$, y $F_(2,m)$ otra distribución empírica acumulada, pero con una muestra de tamaño $m$. Este cálculo corresponde al supremo de las distancias entre las dos distribuciones, como se puede ver en el ejemplo de la @kolmogorov-smirnov a continuación:
+
+#figure(image("images/classes/kolmogorov-smirnov.svg", width: 55%), caption: [Representación gráfica de $D_(n,m)$ en un test de Kolmogorov-Smirnov.]) <kolmogorov-smirnov>
+
+La regla de rechazo es la siguiente:
+
+$
+  D_(n,m) > C(alpha) dot sqrt((n+m)/(n dot m)); quad C(alpha) = sqrt(-ln(alpha/2) dot 1/2)
+$
+
+#example[
+  _Analizando fallas en equipos mineros._ Definamos las siguientes variables aleatorias:
+
+  $
+    X_i: i"-ésima presión sobre el equipo"; quad Y = cases(
+      1 & "si el equipo falla",
+      0 & "si no"
+    )
+  $
+
+  y extraigamos las muestras $F_(1,N) = {X_i bar Y = 1}$ con $abs(F_(1,N)) = N$ y $F_(2,M)={X_i bar Y=0}$ con $abs(F_(2,M)) = M$, es decir, muestras de tamaño $N$ y $M$ cuando el equipo falla y no falla respectivamente. Nos gustaría que el test se rechazara, o sea, que las presiones sean distintas en modo falla y no falla. De esta manera, podemos establecer una correlación entre la presión y el estado de falla del equipo, lo que permite anticiparse a los defectos.
+]

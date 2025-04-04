@@ -9,23 +9,25 @@
   }
 }
 
+#let outline-rules(doc) = {
+  set text(font: "TeX Gyre Heros", hyphenate: false, lang: "es")
+  set par(justify: true)
+  set page("us-letter")
+  //show smallcaps: set text(font: "Lato")
+  show raw: set text(font: "IBM Plex Mono", size: 10pt)
+  show heading: it => upper(it)
+  set text(size: 11pt)
+  doc
+}
+
 #let main-rules(doc) = {
   set text(
-    font: "TeX Gyre Heros", 
+    font: "TeX Gyre Heros",
     hyphenate: false, 
     lang: "es", 
     size: 11pt, 
     fill: black
   )
-  set page(numbering: "1", "us-letter", header: [
-    #set align(center)
-    #set text(fill: luma(50%))
-    --- APUNTE MDS7101 2025/1 ---
-  ], footer: [
-    #set align(center)
-    #set text(fill: luma(50%))
-    #context (counter(page).display(here().page-numbering()))
-  ])
   set par(justify: true)
   set table(stroke: 0.5pt)
   set list(indent: 5pt)
@@ -36,10 +38,9 @@
     #set text(size: fixed-size * 1pt)
     #upper(it)
   ]
-  //show math.equation: set text(font: "TeX Gyre Pagella Math")
   show math.equation.where(block: false): box
   //show smallcaps: set text(font: "Lato")
-  //show raw: set text(font: "IBM Plex Mono", size: 10pt)
+  show raw: set text(font: "IBM Plex Mono", size: 10pt)
   show link: set text(fill: main-color)
   show link: strong
   show ref: set text(fill: main-color)
@@ -48,19 +49,41 @@
     it
   }
 
+  page(
+    paper: "us-letter",
+    header: none,
+    footer: none,
+    margin: 0pt,
+    image("../images/cover.svg")
+  )
+
+  counter(page).update(1)
+  set page(
+    paper: "us-letter",
+    header: none
+  )
+
+  outline()
+  pagebreak(weak: true)
+
+  set page(numbering: "1", "us-letter", header: [
+    #set align(center)
+    #set text(fill: luma(50%))
+    --- APUNTE MDS7101 2025/1 ---
+  ], footer: [
+    #set align(center)
+    #set text(fill: luma(50%))
+    #context (counter(page).display(here().page-numbering()))
+  ])
+  counter(page).update(1)
+
   doc
 }
 
-#let outline-rules(doc) = {
-  set text(font: "TeX Gyre Heros", hyphenate: false, lang: "es")
-  set par(justify: true)
-  set page("us-letter")
-  //show smallcaps: set text(font: "Lato")
-  //show raw: set text(font: "IBM Plex Mono", size: 10pt)
-  show heading: it => upper(it)
-  set text(size: 11pt)
-  doc
-}
+#let cal(it) = math.class("normal", box({
+  show math.equation: set text(font: "Garamond-Math", stylistic-set: 3)
+  $#math.cal(it)$
+}) + h(0pt))
 
 #let keyword(str) = {
   set text(fill: main-color)

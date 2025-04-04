@@ -1,3 +1,5 @@
+#import "./template.typ": cal
+
 #let std(va) = $"STD"(#va)$
 #let var(X) = $VV"ar"(#X)$
 #let cov(X, Y) = $CC"ov"(#X, #Y)$
