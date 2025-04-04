@@ -383,33 +383,35 @@ $
 
 Una pregunta que surge naturalmente es: ¿podemos afirmar que el medicamento es efectivo? La respuesta es no, porque a pesar de que puedo hacer que las muestras sean altamente homogéneas, siempre habrán factores que no podemos controlar, por ejemplo, situaciones personales de cada paciente, medicamentos extras que no fueron informados, etc. Para enfrentar esta problemática, se definen las siguientes herramientas matemáticas:
 
-- Hipótesis nula ($H_0$): Plantea que "no existe un efecto", y se asume que es cierta hasta que tengamos evidencia suficiente para rechazar esta afirmación Afecta el tipo de experimento o procedimiento, y los datos que son recopilados.
+- Hipótesis nula ($H_0$): Plantea que "no existe un efecto", y se asume que es cierta hasta que tengamos evidencia suficiente para rechazar esta afirmación. Afecta el tipo de experimento o procedimiento, y los datos que son recopilados.
 
   #example[
-    *Efectividad de la urgencia de un hospital.* Están las readmisiones, muertes hospitalarias, y la duración de la estadía. Si uno mira estos indicadores, suelen ser altos, entonces una conclusión apresurada sería decir que la urgencia funciona mal. Esto no necesariamente es cierto, porque los pacientes que entran a urgencia ya vienen con una situación grave previa.
+    _Efectividad de la urgencia de un hospital._ Están las readmisiones, muertes hospitalarias, y la duración de la estadía. Si uno mira estos indicadores, suelen ser altos, entonces una conclusión apresurada sería decir que la urgencia funciona mal. Esto no necesariamente es cierto, porque los pacientes que entran a urgencia ya vienen con una situación grave previa.
   ]
 
 - Hipótesis alternativa ($H_A$ ó $H_1$). Corresponde a lo opuesto a la hipótesis nula, pues representa la existencia de un efecto. Generalmente, es lo que queremos demostrar.
 
-== $p$-valor
+== P-valor <sec-p-value>
   
 El $p$-valor corresponde a la probabilidad de que bajo la hipótesis nula los datos muestren la diferencia que observo. Con el ejemplo de la @hypothesis-test, esta "diferencia observada" sería el día adicional que tardó el segundo grupo en recuperarse. Un $p$-valor cercano a $0$ diría que la probabilidad de observar una diferencia de un día, siendo que el medicamento no es efectivo, es muy baja.
 
-Para realizar conclusiones, se suele fijar un umbral que usualmente es $p_"lím"=0.05$. Si el $p$-valor es menor a $p_"lím"$, se habla de la existencia de #keyword[significancia estadística]. Si el $p$-valor es mayor a $p_"lím"$, se dice que no hay significancia estadística. Para el caso $p=p_"lím"$ podemos decir que hay o no hay significancia dependiendo de cómo se realizó el experimento, dado que este umbral se fija de manera arbitraria.
-
-Si tenemos significancia estadística, se rechaza la hipótesis nula $H_0$, es decir, puedo descartar que el medicamento no sea efectivo porque el experimento es riguroso. Si no hay significancia estadística, no se puede rechazar la hipótesis nula, y se dice que no hay evidencia suficiente para afirmar que el medicamento es efectivo.
-
-En la @p-value se puede ver la representación gráfica de un $p$-valor. Matemáticamente, corresponde al área bajo la curva que *TODO*... También $f(overline(X) bar H_0)$ representa la curva de distribución para el caso donde el medicamento es inefectivo, y $f(overline(X) bar H_A)$ donde es efectivo.
+La @p-value muestra dos PDF: por un lado $f(overline(X) bar H_A)$, que representa la curva de distribución para el caso donde el medicamento es efectivo, y por otro, $f(overline(X) bar H_0)$, que representa la curva cuando el medicamento es inefectivo. En este mismo gráfico, se puede ver la representación gráfica de un $p$-valor sobre la cola derecha de la distribución de $overline(X) bar H_A$. Matemáticamente, corresponde al área de la región que define el valor observado del estadístico $t$.
 
 #figure(image("images/classes/p_value.svg", width: 80%), caption: [Representación gráfica de un $p$-valor.]) <p-value>
 
-#warning-box[
-  Al rechazar la hipótesis nula, estamos aseverando que existe significancia estadística para decir que el medicamento es efectivo, sin embargo, como veremos en la @neyman-pearson, existe una pequeña probabilidad de cometer un error, y está asociada al factor $alpha$ que escogimos.
+#note-box[
+  En la @p-value, el valor $t_"crítico"$ define la región de rechazo, que corresponde a la zona donde se rechaza la hipótesis nula. Esta región se define a partir de un umbral $alpha$ que se verá en la siguiente sección (@neyman-pearson).
 ]
 
-== Teorema de Neyman-Pearson <neyman-pearson>
+=== Teorema de Neyman-Pearson <neyman-pearson>
 
-Establece una significancia $alpha$ que usualmente varía en el rango $[0.01, 0.05]$. Se definen los errores de tipo $1$ y $2$ como se ilustra en la @table-neyman-pearson de a continuación:
+Para realizar conclusiones sobre un test de hipótesis, se suele fijar un umbral que usualmente es $alpha in [0.01, 0.05]$. Si el $p$-valor es menor a $alpha$, se habla de la existencia de significancia estadística. Si el $p$-valor es mayor a $alpha$, se dice que no hay significancia estadística. Para el caso $p=alpha$ podemos decir que hay o no hay significancia dependiendo de cómo se realizó el experimento, dado que este umbral se fija de manera arbitraria.
+
+Si tenemos significancia estadística, se rechaza la hipótesis nula $H_0$, es decir, puedo descartar que el medicamento no sea efectivo porque el experimento es riguroso. Si no hay significancia estadística, no se puede rechazar la hipótesis nula, y se dice que no hay evidencia suficiente para afirmar que el medicamento es efectivo.
+
+#warning-box[
+  Al rechazar la hipótesis nula, estamos aseverando que existe significancia estadística para decir que el medicamento es efectivo, sin embargo, existe una pequeña probabilidad de cometer un error, y está asociada al factor $alpha$ que escogimos, como se puede ver en la @table-neyman-pearson.
+]
 
 #figure(table(
   columns: 3,
@@ -425,13 +427,11 @@ Establece una significancia $alpha$ que usualmente varía en el rango $[0.01, 0.
   }
 ), caption: [Tabla de decisiones para el test de hipótesis.]) <table-neyman-pearson>
 
-En esencia, si tenemos un $p$-valor menor a $alpha$, se rechaza la hipótesis nula, pues hay significancia estadística. Si el $p$-valor es mayor a $alpha$, no se puede rechazar la hipótesis nula. En este caso, el error tipo $1$ ($alpha$) corresponde a rechazar la hipótesis nula cuando es cierta, y el error tipo $2$ ($beta$) corresponde a no rechazar la hipótesis nula cuando es falsa.
-
-
+El error tipo $1$ ($alpha$) corresponde a rechazar la hipótesis nula cuando es cierta, y el error tipo $2$ ($beta$) corresponde a no rechazar la hipótesis nula cuando es falsa.
 
 == Tests clásicos
 
-=== Test de diferencia de medias
+=== Test de diferencia de medias <difference-means>
 
 El test de diferencia de medias, también denominado $t$-test, formula las siguientes hipótesis:
 
@@ -487,24 +487,6 @@ $
 
 Es decir, $t$ distribuye como una $t$-Student de $N+M-2$ grados de libertad.
 
-Hay tres formas de analizar un test de hipótesis, y todas son equivalentes:
-
-+ Comparar $t$ con el valor tabulado de la distribución.
-
-  - #example[Si $alpha=0.05$, debo buscar el valor para $alpha\/2 = 0.025$ en la _tail probability_ y $N+M-2$ grados de libertad, dado que el test de diferencia de media es de $2$ colas. Si $t$ es mayor que el valor tabulado, se rechaza la hipótesis nula. Si $t$ es menor que el valor tabulado, no se puede rechazar la hipótesis nula.
-
-    #note-box[  
-      La hipótesis nula manda en la elección de la cantidad de colas ($1$ ó $2$). Si se prueba la diferencia de dos promedios, es un test de $2$ colas. Si uno es mayor que el otro, es una cola.
-    ]]
-
-+ Calcular el $p$-valor y comparar con $alpha$.
-
-+ Mirar el intervalo de confianza $"C"(overline(X)-overline(Y)) = overline(X)-overline(Y) plus.minus Z_alpha dot std(overline(X)-overline(Y))$
-
-  - #example[¿Qué pasa si el intervalo de confianza del $95 \%$ no contiene el $0$? Entonces, se rechaza la hipótesis nula, porque esta asumía que la diferencia de medias era $0$. Si el intervalo de confianza contiene el $0$, no se puede rechazar la hipótesis nula.]
-
-Si rechazamos la hipótesis nula, entonces podemos aseverar que hay una diferencia de medias significativa entre los grupos.
-
 === Test de diferencia en proporciones
 
 Sea $p_i$ la probabilidad de éxito en la $i$-ésima población. Se define la hipótesis nula como:
@@ -521,31 +503,71 @@ $
 
 cuando $n_1$ y $n_2$ tienden a infinito.
 
+== Análisis de un test de hipótesis
+
+
+Hay tres formas de analizar un test de hipótesis, y todas son equivalentes. Para los ejemplos de a continuación, usaremos el test de diferencia de medias (@difference-means), pero se pueden aplicar a cualquier otro test.
+
++ Comparar el estadístico $t$ con el valor tabulado de la distribución.
+
+  - #example[Si $alpha=0.05$, debo buscar el valor para $alpha\/2 = 0.025$ en la _tail probability_ de la tabla de distribución de una $t$-Student con $N+M-2$ grados de libertad. El valor de $alpha$ se divide en $2$ dado que el test de diferencia de medias es de $2$ colas. Si $t$ es mayor que el valor tabulado, se rechaza la hipótesis nula. Si $t$ es menor que el valor tabulado, no se puede rechazar la hipótesis nula.]
+
+    #note-box[
+      Si la hipótesis alternativa contiene $<$ o $>$, se dice que es un test de una cola. Si la condición es $!=$, entonces es un test de dos colas.
+    ]
+
++ Calcular el $p$-valor y comparar con $alpha$.
+
+  - #example[
+    Es similar al método anterior, salvo que ahora tenemos los grados de libertad (`df`; filas) y el valor del estadístico $t$ (celdas de la tabla). Con esto, buscamos el $p$-valor más cercano en la tabla de la $t$-Student (_tail probability_; columnas). Si el $p$-valor es menor que $alpha$, se rechaza la hipótesis nula. Si el $p$-valor es mayor que $alpha$, no se puede rechazar la hipótesis nula.
+  ]
+
++ Mirar el intervalo de confianza $"C"(overline(X)-overline(Y)) = overline(X)-overline(Y) plus.minus Z_alpha dot std(overline(X)-overline(Y))$
+
+  - #example[¿Qué pasa si el intervalo de confianza del $95 \%$ no contiene el $0$? Entonces, se rechaza la hipótesis nula, porque esta asumía que la diferencia de medias era $0$. Si el intervalo de confianza contiene el $0$, no se puede rechazar la hipótesis nula.]
+
+Si rechazamos la hipótesis nula, tomando el ejemplo, podemos aseverar que hay una diferencia de medias significativa entre los grupos.
+
 = Ejemplos de tests de hipótesis
 
-En la sección previa, vimos que nos interesa hacer comparaciones entre dos variables aleatorias.
+== Tests paramétricos y no paramétricos
 
-Estructura del test de hipótesis:
+Los tests de hipótesis paramétricos se usan cuando se conoce la distribución de las variables y se puede hacer inferencia sobre sus parámetros. Por ejemplo: $t$-test, test de diferencia en varianzas ($F$-Fisher), y ANOVA.
 
-- $H_0$ (hipótesis nula): declaro lo que no quiero que pase.
+Por otro lado, los tests de hipótesis no paramétricos ("distribution-free test") son los que se hacen cuando no conocemos las distribuciones, o no se quiere hacer supuestos sobre las distribuciones. Por ejemplo: Mann-Whitney (U-test), Kruskal-Kallis (H-test), y Kolmogorov-Smirnov (KS-test).
 
-- $H_A$ ó $H_1$ (hipótesis alternativa): declaro lo contrario a la hipótesis nula.
+=== Test de Kolmogorov-Smirnov
 
-+ $t$-test: $H_0 = overline(X_1) = overline(X_2)$.
+Este test se ocupa para ver si dos muestras empíricas se parecen o no. Esto permite, por ejemplo, hacer clasificaciones binarias. Su estadístico, $D_(n,m)$, se define como sigue:
 
-+ #underline[Supuestos.] Un ejemplo es el siguiente: "las variables aleatorias distribuyen $normal$ y sus varianzas son iguales".
+$
+  D_(n, m) = sup_x abs(F_(1,n) (x) - F_(2,m) (x))
+$
 
-+ Estadístico y ver cómo distribuye bajo $H_0$, es decir, se asume que la hipótesis nula es cierta. Dicho de otra forma, se asume que no hay efecto.
+donde $F_(1,n)$ es una distribución empírica acumulada (CDF) con una muestra de tamaño $n$, y $F_(2,m)$ otra distribución empírica acumulada, pero con una muestra de tamaño $m$. Este cálculo corresponde al supremo de las distancias entre las dos distribuciones, como se puede ver en el ejemplo de la @kolmogorov-smirnov a continuación:
 
-+ Fijar nivel de significancia y comparar con $"C"(overline(X))$, el $p$-valor, o el valor de tabla $Z_alpha$.
+#figure(image("images/classes/kolmogorov-smirnov.svg", width: 55%), caption: [Representación gráfica de $D_(n,m)$ en un test de Kolmogorov-Smirnov.]) <kolmogorov-smirnov>
 
-== Tipos de tests de hipótesis
+La regla de rechazo es la siguiente:
 
-Existen los test de hipótesis paramétricos y no paramétricos. Los tests de hipótesis paramétricos se usan cuando se conoce la distribución de las variables y se puede hacer inferencia sobre sus parámetros. Por ejemplo: $t$-test, test de diferencia en varianzas ($F$-Fisher), y ANOVA.
+$
+  D_(n,m) > C(alpha) dot sqrt((n+m)/(n dot m)); quad C(alpha) = sqrt(-ln(alpha/2) dot 1/2)
+$
 
-Por otro lado, los tests de hipótesis no paramétricos ("distribution-free test") son los que se hacen cuando no conocemos las distribuciones, o no se quiere hacer supuestos sobre las distribuciones. Por ejemplo, Mann-Whitney (U-test), Kruskal-Kallis (H-test), y Kolmogorov-Smirnov (KS-test).
+#example[
+  _Analizando fallas en equipos mineros._ Definamos las siguientes variables aleatorias:
 
-=== Test de hipótesis conjunta
+  $
+    X_i: i"-ésima presión sobre el equipo"; quad Y = cases(
+      1 & "si el equipo falla",
+      0 & "si no"
+    )
+  $
+
+  y extraigamos las muestras $F_(1,N) = {X_i bar Y = 1}$ con $abs(F_(1,N)) = N$ y $F_(2,M)={X_i bar Y=0}$ con $abs(F_(2,M)) = M$, es decir, muestras de tamaño $N$ y $M$ cuando el equipo falla y no falla respectivamente. Nos gustaría que el test se rechazara, o sea, que las presiones sean distintas en modo falla y no falla. De esta manera, podemos establecer una correlación entre la presión y el estado de falla del equipo, lo que permite anticiparse a los defectos.
+]
+
+== Tests de hipótesis conjunta
 
 Se dice que un test es de hipótesis conjunta si tiene más de una restricción lineal. Por ejemplo, el siguiente test cumple esta condición:
 
@@ -574,7 +596,7 @@ $
 
 Cuando rechazo $H_0$, se puede concluir que al menos una de las hipótesis no es cierta estadísticamente.
 
-=== ANOVA
+=== Test de ANOVA
 
 La idea de este test es extender el $t$-test, o test de diferencia de medias, a más de dos grupos.
 
@@ -621,35 +643,4 @@ Los distintos elementos que componen un _boxplot_, para $3$ grupos $G_1$, $G_2$ 
 
 #note-box[
   Un gráfico similar para ver la distribución de los datos es el _violinplot_. Lo importante es que está implementado en librerías populares de visualización de información como `seaborn` en Python.
-]
-
-=== Test de Kolmogorov-Smirnov
-
-Este test se ocupa para ver si dos muestras empíricas se parecen o no. Esto permite, por ejemplo, hacer clasificaciones binarias. Su estadístico, $D_(n,m)$, se define como sigue:
-
-$
-  D_(n, m) = sup_x abs(F_(1,n) (x) - F_(2,m) (x))
-$
-
-donde $F_(1,n)$ es una distribución empírica acumulada (CDF) con una muestra de tamaño $n$, y $F_(2,m)$ otra distribución empírica acumulada, pero con una muestra de tamaño $m$. Este cálculo corresponde al supremo de las distancias entre las dos distribuciones, como se puede ver en el ejemplo de la @kolmogorov-smirnov a continuación:
-
-#figure(image("images/classes/kolmogorov-smirnov.svg", width: 55%), caption: [Representación gráfica de $D_(n,m)$ en un test de Kolmogorov-Smirnov.]) <kolmogorov-smirnov>
-
-La regla de rechazo es la siguiente:
-
-$
-  D_(n,m) > C(alpha) dot sqrt((n+m)/(n dot m)); quad C(alpha) = sqrt(-ln(alpha/2) dot 1/2)
-$
-
-#example[
-  _Analizando fallas en equipos mineros._ Definamos las siguientes variables aleatorias:
-
-  $
-    X_i: i"-ésima presión sobre el equipo"; quad Y = cases(
-      1 & "si el equipo falla",
-      0 & "si no"
-    )
-  $
-
-  y extraigamos las muestras $F_(1,N) = {X_i bar Y = 1}$ con $abs(F_(1,N)) = N$ y $F_(2,M)={X_i bar Y=0}$ con $abs(F_(2,M)) = M$, es decir, muestras de tamaño $N$ y $M$ cuando el equipo falla y no falla respectivamente. Nos gustaría que el test se rechazara, o sea, que las presiones sean distintas en modo falla y no falla. De esta manera, podemos establecer una correlación entre la presión y el estado de falla del equipo, lo que permite anticiparse a los defectos.
 ]
