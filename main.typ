@@ -178,7 +178,7 @@ Cuando decimos $corr(X,Y) = 0$, quiere decir que no hay información sobre la re
 
   pero $Y$ sí depende de $X$, entonces no pueden ser independientes.]
 
-== Inferencia estadística
+== Inferencia estadística <statistic-inference>
 
 La inferencia estadística es una rama de la estadística que se encarga de hacer predicciones o caracterizaciones sobre una población a partir de una muestra.
 
@@ -644,3 +644,118 @@ Los distintos elementos que componen un _boxplot_, para $3$ grupos $G_1$, $G_2$ 
 #note-box[
   Un gráfico similar para ver la distribución de los datos es el _violinplot_. Lo importante es que está implementado en librerías populares de visualización de información como `seaborn` en Python.
 ]
+
+= Estimación paramétrica
+
+Hasta ahora, hemos trabajado sobre la identificación de fenómenos, sin embargo, no hemos visto cómo predecir. Esto es algo que se trabajará en esta sección. Se introduce entonces una notación que mencionamos en la @statistic-inference:
+
+$
+  Y = m(X)
+$
+
+donde $Y$ es la variable dependiente, $m$ el modelo, y $X$ las variables independientes. Un ejemplo podría ser $Y :=$ Tiempo de espera, $X_1 :=$ Género, $X_2 :=$ IDH (índice de desarrollo humano).
+
+- ¿Cómo evaluamos si un modelo es bueno? Tenemos que mirar el error que tiene con respecto a $Y$. Existen métricas también que nos permiten cuantificar este error, como la métrica $R^2$.
+
+== Función de pérdida/costo (_loss_)
+
+Una función de pérdida intuitivamente determina el costo de estimar uno de los argumentos mediante otro. Normalmente, las funciones de pérdida se anotan con $L$ y tienen la siguiente firma:
+
+$
+  L = Omega times Omega -> RR 
+$
+
+#example[
+  Sea $theta in Omega$ y $a in Omega$ un estimador, entonces el costo de estimar $theta$ mediante $a$ está dado por la función de costo $L(theta, a)$.
+]
+
+Una función de pérdida comunmente usada es la divergencia de Kullback-Leibler.
+
+== Modelos lineales <linear-models>
+
+Los modelos lineales son los modelos más simples que existen, y se definen como:
+
+$
+    Y = X dot beta + epsilon; quad Y, epsilon in RR^n, X in cal(M)_(n times (k+1)) (RR), beta in RR^(k+1)
+$
+
+donde $Y$ es el vector de valores predichos, $X$ es una matriz de datos, $beta$ es el vector de parámetros del modelo, y $epsilon$ es el vector de errores. La matriz $X$ tiene su primera columna llena de unos para el intercepto $beta_0$, como se puede ver a continuación:
+
+$
+  Y = vec(Y_1, dots, Y_n); quad X = mat(1, X_(1,1), dots, X_(k,1); 1, X_(1,2), dots, X_(k,2); dots.v, dots.v, dots, dots.v; 1, X_(1,n), dots, X_(k,n)); quad bold(beta) = vec(beta_0, beta_1, dots, beta_k); quad bold(epsilon) = vec(epsilon_1, dots, epsilon_n)
+$
+
+#example(title: "Ejemplo de aplicación")[
+  El precio de un vino, analizado mediante un gráfico donde la variable independiente son los años desde la cosecha, y la variable dependiente es el precio. Podemos entonces definir un modelo simple que tenga la siguiente relación, con $Y = Y_"precio"$ y $X = X_"años cosecha"$:
+
+  $
+    Y = beta_0 + beta_1 dot X + epsilon
+  $
+
+  El error de este modelo puede ser calculado como $epsilon = Y - m(X) = Y - beta_0 - beta_1 X$. Un modelo lineal es muy simple para modelar este fenómeno y varios más, pues los datos muestran una relación distinta, y hay muchos errores de predicción, como se puede ver en la @linear-model.
+
+  #figure(image("images/classes/linear_model.svg", width: 60%), caption: [Representación gráfica de un modelo lineal. $Y_"pred"$ es el valor predicho (la recta), e $Y_"real"$ el valor real (los puntos azules).]) <linear-model>
+]
+
+== Mínimos cuadrados ordinarios (OLS)
+
+El método de mínimos cuadrados ordinarios (OLS) es un método de estimación de los parámetros $beta_i$ para $i in {0, dots, k}$ que busca minimizar la suma de los cuadrados de los errores. Este método se basa en la idea de que el error cuadrático es una buena medida de la discrepancia entre el modelo y los datos observados, como se vio en el gráfico de la @linear-models.
+
+El modelo de optimización para sólo una variable independiente (es decir, $k=1$), se define como $min_(beta_0, beta_1) epsilon^2$, donde $epsilon$ es una función de $beta_0$ y $beta_1$, es decir, $epsilon = epsilon(beta_0, beta_1)$.
+
+=== Regresión multivariada
+
+Como muy pocas veces tenemos modelos de sólo una variable independiente, necesitamos una siguiente generalización para $k$ variables independientes. Esta generalización es la que se vio en la @linear-models, para un $k>1$. El problema de optimización en este caso es el siguiente:
+
+$
+  min_beta norm(epsilon)^2 = min_beta epsilon^T epsilon &= min_beta (Y^T-beta^T X^T)dot (Y-X beta) \
+  &= min_beta Y^T Y - Y^T X beta - beta^T X^T Y + beta^T X^T X beta \
+  &= min_beta Y^T Y - 2 beta^T X^T Y + beta^T X^T X beta
+$
+
+Notar que el último paso se obtiene porque $Y^T X beta = (beta^T X^T Y)^T$, y ambas multiplicaciones son un número real realizando un análisis dimensional, por lo tanto, deben dar el mismo resultado.
+
+Como el problema de optimización es irrestricto, el óptimo se encuentra cuando la derivada es $0$ (condición de primer orden). Entonces:
+
+$
+  & partial / (partial beta) lr([ Y^T Y - 2 X^T Y + 2 X^T X beta ]|_(beta = hat(beta)_"OLS")) = 0 \
+  <==> & -2 X^T Y + 2 X^T X hat(beta)_"OLS" = 0 \
+  <==> & X^T X hat(beta)_"OLS" = X^T Y \
+  <==> & hat(beta)_"OLS" = (X^T X)^(-1) X^T Y
+$
+
+Esta última expresión toma especial importancia en la definición de un requisito para el uso de los mínimos cuadrados ordinarios. Se requiere que $X^T X$ sea invertible, es decir, las columnas de $X$ no pueden ser linealmente dependientes. 
+
+#example[
+  ¿Cuándo no usar OLS, dado que $X^T X$ no es invertible? Tomemos un caso donde $X$ es linealmente dependiente (l. d.):
+
+  $
+    X_"mujer" = cases(
+      1 & "si es mujer",
+      0 & "si no"
+    ); quad X_"hombre" = cases(
+      1 & "si es hombre",
+      0 & "si no"
+    )
+  $
+
+  Estas dos variables son completamente dependientes, pues $X_"mujer" = 1 - X_"hombre"$, por lo tanto, un modelo que esté definido mediante $Y = beta_0 + beta_1 dot X_"mujer" + beta_2 dot X_"hombre" + epsilon$ no es válido para usar OLS. 
+  
+  La solución es desprenderse de alguna de las dos variables, y esto depende de la interpretación que se le quiera dar al modelo. Por ejemplo, si se quiere ver el efecto de ser mujer, entonces se usa $X_"mujer"$ y se deja fuera $X_"hombre"$, y viceversa.
+
+  #note-box[
+    Generalmente, un _solver_ devolverá `NaN` cuando encuentre que la matriz $X^T X$ no es invertible.
+  ]
+]
+
+Finalmente, nos cuestionaremos la insesgadez del estimador $hat(beta)_"OLS"$. Para ello, desarrollemos la expresión de su esperanza:
+
+$
+  EE[hat(beta)_"OLS"] &= EE[(X^T X)^(-1) X^T Y] \
+  &= EE[(X^T X)^(-1) X^T (X beta + epsilon)] \
+  &= EE[(X^T X)^(-1) X^T X beta] + EE[(X^T X)^(-1) X^T epsilon] \
+  &= EE[beta] + EE[(X^T X)^(-1) X^T epsilon] \
+  &= beta + (X^T X)^(-1) X^T dot EE[epsilon] \
+$
+
+La última igualdad es cierta porque $X$ es un dato. Así, la única forma de que $hat(beta)_"OLS"$ sea insesgado es que $EE[epsilon] = 0$. Si se quiere tener un estimador insesgado de OLS, se debe imponer este supuesto.
