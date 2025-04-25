@@ -1,5 +1,6 @@
 #import "utils/template.typ": *
 #import "utils/variables.typ": *
+#import "utils/functions.typ": *
 #import "@preview/theorion:0.3.3": *
 #import cosmos.fancy: *
 #show: show-theorion
@@ -130,7 +131,7 @@ En el curso, veremos principalmente las siguientes distribuciones discretas:
   t= Z/sqrt(Y\/n) ~ t_[n]
   $
 
-+ Fischer ($F$): combinamos dos $chi^2$ independientes:
++ Fisher ($F$): combinamos dos $chi^2$ independientes:
 
   $
   X_1 ~ chi_[n_1]^2 and X_2 ~ chi_[n_2]^2 "entonces" F=(X_1\/n_1)/(X_2\/n_2)~F_(n_1,n_2)
@@ -198,7 +199,7 @@ $
 
 - *¿Por qué nos gusta el promedio?* El promedio cumple con propiedades que hacen que sea un buen estimador. Una de ellas se enlista a continuación:
 
-  - _Insesgadez_. Sea $T(X)$ estimador del parámetro $theta$. $T(X)$ es #keyword[insesgado] si $EE[T(X)] = theta$. Esto significa que su valor esperado está completamente centrado en el parámetro que estoy buscando. Esta propiedad la cumple el promedio:
+  - _Insesgadez_. Sea $T(X)$ estimador del parámetro $theta$. $T(X)$ es #annotate[insesgado] si $EE[T(X)] = theta$. Esto significa que su valor esperado está completamente centrado en el parámetro que estoy buscando. Esta propiedad la cumple el promedio:
 
     $
     EE(overline(X)) &= EE(1/N dot sum_(i=1)^N X_i) \ 
@@ -299,7 +300,7 @@ Esto se anotará como $X_n scripts(->)_(PP) X$ ó $scripts("plim")_(n -> infinit
 
 Basándose en esto se puede definir una nueva propiedad para los estimadores, que extiende la propiedad de insesgadez que se vio en la @estimators:
 
-- _Consistencia_: Un estimador $T(X_n)$ del parámetro $theta$ es #keyword("consistente") si converge en probabilidad al parámetro de interés, es decir:
+- _Consistencia_: Un estimador $T(X_n)$ del parámetro $theta$ es #annotate("consistente") si converge en probabilidad al parámetro de interés, es decir:
  $
    lim_(n->infinity) PP(abs(T(X_n)-theta)<epsilon)=1
  $
@@ -451,7 +452,7 @@ donde $S_P$ define una expresión que se genera a partir del estimador de la var
 Para la hipótesis nula, es equivalente decir $H_0: overline(X)=overline(Y) <==> H_0: overline(X)-overline(Y)=0$. Esta diferencia distribuye como una resta de normales:
 
 $
-  overline(X)-overline(Y) ~ normal(mu_X - mu_Y #keyword[\= 0], sigma^2 dot (1/N + 1/M)) & "(hipótesis del test)"
+  overline(X)-overline(Y) ~ normal(mu_X - mu_Y #annotate[\= 0], sigma^2 dot (1/N + 1/M)) & "(hipótesis del test)"
 $
 
 La varianza de la resta se calcula de la siguiente forma, dado que son variables aleatorias i.i.d.:
@@ -463,7 +464,7 @@ $
 Si $sigma^2$ es conocido, entonces podemos decir que:
 
 $
-  Z = (overline(X)-overline(Y) #keyword[-0])/(sigma dot sqrt(1\/N + 1\/M)) ~ normal(0, 1)
+  Z = (overline(X)-overline(Y) #annotate[-0])/(sigma dot sqrt(1\/N + 1\/M)) ~ normal(0, 1)
 $
 
 Pero como no lo conocemos, debemos estimar el parámetro. Como recuerdo, el estimador insesgado de la varianza es:
@@ -703,7 +704,7 @@ El método de mínimos cuadrados ordinarios (OLS) es un método de estimación d
 
 El modelo de optimización para sólo una variable independiente (es decir, $k=1$), se define como $min_(beta_0, beta_1) epsilon^2$, donde $epsilon$ es una función de $beta_0$ y $beta_1$, es decir, $epsilon = epsilon(beta_0, beta_1)$.
 
-=== Regresión multivariada
+=== Regresión multivariada <multivariate-regression>
 
 Como muy pocas veces tenemos modelos de sólo una variable independiente, necesitamos una siguiente generalización para $k$ variables independientes. Esta generalización es la que se vio en la @linear-models, para un $k>1$. El problema de optimización en este caso es el siguiente:
 
@@ -759,3 +760,103 @@ $
 $
 
 La última igualdad es cierta porque $X$ es un dato. Así, la única forma de que $hat(beta)_"OLS"$ sea insesgado es que $EE[epsilon] = 0$. Si se quiere tener un estimador insesgado de OLS, se debe imponer este supuesto.
+
+Por otro lado, si calculamos la varianza del estimador, tenemos la siguiente expresión:
+
+$
+  var(hat(beta)_"OLS") &= var((X^T X)^(-1) X^T Y) \
+  &= var(beta + (X^T X)^(-1) X^T epsilon) \
+  &= var((X^T X)^(-1) X^T epsilon) \ 
+  &= (X^T X)^(-1) X^T dot var(epsilon) dot ((X^T X)^(-1) X^T)^T & annotate("("var(A X) = A dot var(X) dot A^T")") \
+  &= (X^T X)^(-1) X^T dot var(epsilon) dot X dot (X^T X)^(-1) & #h(6em) annotate("("(A^(-1))^T = (A^T)^(-1)")") \
+  &= (X^T X)^(-1) X^T dot sigma^2_epsilon dot II_n dot X dot (X^T X)^(-1) & annotate(("asunción sobre" var(epsilon))) \
+  &= sigma^2_epsilon dot (X^T X)^(-1) dot X^T X dot (X^T X)^(-1) & annotate("(el escalar" sigma^2_epsilon "conmuta)") \
+  &= sigma^2_epsilon dot II_n dot (X^T X)^(-1)
+$
+
+La asunción que se hace sobre $var(epsilon)$ es que necesitamos que sea igual a una constante, que en esta ecuación denotamos por $sigma^2_epsilon dot II_n$, donde $II_n$ es la matriz identidad de $n times n$.
+
+== Criterio de mínima varianza <minimum-variance>
+
+Sean $hat(beta)$ un estimador insesgado fijo y $tilde(beta)$ cualquier otro estimador insesgado del parámetro $beta$. Se dice que $hat(beta)$ es de mínima varianza si se cumple la siguiente relación: $var(hat(beta)) <= var(tilde(beta))$.
+
+== Supuestos de OLS
+
+1. #underline[Linealidad]: El modelo debe ser lineal en los parámetros.
+
+  #example[
+    El siguiente modelo no es lineal en los parámetros, y por lo tanto, no cumple este supuesto:
+
+    $
+      Y = beta_0 + underbrace(beta_1 dot beta_2, "no lineal") X_1 + underbrace(beta_3^2, "no lineal") X_2 + epsilon
+    $
+
+    Por otro lado, el siguiente modelo sí cumple el supuesto:
+
+    $
+      Y = beta_0 + beta_1 X_1 + beta_2 X_1 dot X_2 + beta_3 dot X_2^3 + beta_4 dot log(X_3) + epsilon
+    $
+  ]
+
+  Además, el error debe ser aditivo, es decir, $Y = beta_0 + beta_1 X_1 + dots + beta_k X_k + epsilon$. No puede ser multiplicativo, como lo sería en el siguiente modelo: $Y = beta_0 + beta_1 X_1 epsilon$.
+
+2. #underline[Muestra aleatoria]: Asumo que trabajo con ${Y_i, X_(i k)}_(i=1)^N$, con $k$ variables i.i.d. Entonces:
+
+  $
+    EE(hat(beta)_"OLS") &= beta "si" cov(x, epsilon) = 0 \
+    var(hat(beta)_"OLS") &= var(beta + (X^T X)^(-1) X epsilon) \
+  $
+
+  Necesitamos variación en los datos, porque si escogemos un grupo muy específico en un estudio general, habrá un sesgo muy grande.
+
++ #underline[Multicolinealidad]: Se requiere que $"rango"(X^T X) = k$, o cualquier afirmación equivalente, por ejemplo, que las filas sean linealmente independientes (l. i.). Esto significa que no puede existir correlación perfecta entre $X_i$ y $X_j$ para todo $i != j$, con $i,j in {1, dots, k}$.
+
+  Un ejemplo claro de multicolinealidad es el que se vio en la @multivariate-regression, con $X_"hombre"$ y $X_"mujer"$. Si el modelo es $Y = beta_1 X_"mujer" + beta_2 X_"hombre" + epsilon$, el coeficiente $beta_2$ captura el efecto de ser hombre. Acá, a pesar de que las variables son directamente dependientes, el hecho de eliminar el intercepto $beta_0$ mediante este "truco estadístico" permite usar OLS.
+
+  #note-box[
+    Si queremos añadir una interacción a un modelo, podemos añadir la multiplicación entre las dos variables que interactúan. Por ejemplo,
+
+    $
+      Y = beta_0 + beta_1 X_"mujer" + beta_2 X_(> 40 "años") + beta_3 X_"mujer" dot X_(> 40 "años") + epsilon
+    $
+  ]
+
+  ¿Qué pasa si no es tan obvia la correlación? En el caso de mujeres y hombres, es claro que una depende de la otra, pero hay casos donde esto no es así. Tenemos estrategias para solucionar este problema:
+
+  - Ver matriz de correlación entre las variables independientes $X$.
+
+  - Supongamos que $X_1$ y $X_2$ están altamente correlacionadas, entonces se define el modelo:
+
+    $
+      X_1 = alpha_0 + alpha_1 X_2 + gamma; quad R^2 = "SSR"/"SST" = 1 - "SSE"/"SST" in [0,1]
+    $
+
+    donde $"SSR" = sum_(i=1)^N (hat(Y)_i - overline(Y))^2$, $"SST" = sum_(i=1)^N (Y_i - overline(Y))^2$ y $"SSE" = sum_(i=1)^N (Y_i - hat(Y)_i)^2$ y $R^2$ es una métrica de similitud. Además, se cumple que $"SST" = "SSR" + "SSE"$. Lo que se hace es analizar el modelo, y si $R^2$ es muy cercano a $1$, entonces ambas variables se explican muy bien en función de la otra, por lo tanto, se puede eliminar una de las dos variables.
+
++ #underline[Supuesto de identificación]: No hay ninguna relación entre el error y las variables independientes, es decir, $EE[X^T epsilon] = 0$ o $cov(X, epsilon) = 0$. Si el modelo es:
+
+  $
+    Y = beta_0 + beta_1 X_1 + dots + beta_k X_k + epsilon
+  $
+
+  entonces no hay ninguna variable independiente que sea parcialmente explicada por el error.
+
+  #example[
+    Tenemos el siguiente modelo, con $Y :=$ Salario, y $X :=$ Educación:
+
+    $
+      Y = beta_0 + beta_1 dot X + epsilon
+    $
+
+    entonces se debe cumplir $(partial y)/(partial x) = beta_1$, donde $beta_1$ es el efecto que tiene $X$ en $Y$. Esto nos habla de que una variación en la variable $X$ explica perfectamente el coeficiente que tiene asignado en el modelo. Si la derivada es distinta del coeficiente asignado, entonces existe otra variable que está generando una afección, y como cada $X_i$ es independiente, este efecto está en $epsilon$.
+  ]
+
++ #underline[Homocedasticidad]: Este efecto habla de que $var(epsilon) = sigma^2_epsilon dot II_N$, donde $II_N$ es la identidad de $N times N$. Esto significa que ningún error está correlacionado con otro.
+
+== Teorema de Gauss-Markov
+
+Bajos los supuestos #circled_numbering(1) a #circled_numbering(5) que se vieron en la sección anterior, el estimador $hat(beta)_"OLS"$ es el mejor estimador lineal insesgado. Esto significa que tiene la menor varianza, como se definió en la @minimum-variance. En inglés se dice que es el _Best Linear Unbiased Estimator_ (BLUE).
+
+
+
+

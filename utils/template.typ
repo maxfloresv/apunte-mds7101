@@ -1,19 +1,10 @@
-#let main-color = rgb(4, 46, 199)
-
-#let circled_numbering = (n) => {
-  let circled_numbers = ("①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨")
-  if n >= 1 and n < 10 {
-    circled_numbers.at(n - 1)
-  } else {
-    [#n.]
-  }
-}
+#import "functions.typ": circled_numbering
+#import "variables.typ": main-color
 
 #let outline-rules(doc) = {
   set text(font: "TeX Gyre Heros", hyphenate: false, lang: "es")
   set par(justify: true)
   set page("us-letter")
-  //show smallcaps: set text(font: "Lato")
   show raw: set text(font: "IBM Plex Mono", size: 10pt)
   show heading: it => upper(it)
   set text(size: 11pt)
@@ -39,7 +30,6 @@
     #upper(it)
   ]
   show math.equation.where(block: false): box
-  //show smallcaps: set text(font: "Lato")
   show raw: set text(font: "IBM Plex Mono", size: 10pt)
   show link: set text(fill: main-color)
   show link: strong
@@ -78,14 +68,4 @@
   counter(page).update(1)
 
   doc
-}
-
-#let cal(it) = math.class("normal", box({
-  show math.equation: set text(font: "Garamond-Math", stylistic-set: 3)
-  $#math.cal(it)$
-}) + h(0pt))
-
-#let keyword(str) = {
-  set text(fill: main-color)
-  str
 }
