@@ -646,7 +646,7 @@ Los distintos elementos que componen un _boxplot_, para $3$ grupos $G_1$, $G_2$ 
   Un gráfico similar para ver la distribución de los datos es el _violinplot_. Lo importante es que está implementado en librerías populares de visualización de información como `seaborn` en Python.
 ]
 
-= Estimación paramétrica
+= Introducción a OLS y sus supuestos
 
 Hasta ahora, hemos trabajado sobre la identificación de fenómenos, sin embargo, no hemos visto cómo predecir. Esto es algo que se trabajará en esta sección. Se introduce entonces una notación que mencionamos en la @statistic-inference:
 
@@ -780,7 +780,7 @@ La asunción que se hace sobre $var(epsilon)$ es que necesitamos que sea igual a
 
 Sean $hat(beta)$ un estimador insesgado fijo y $tilde(beta)$ cualquier otro estimador insesgado del parámetro $beta$. Se dice que $hat(beta)$ es de mínima varianza si se cumple la siguiente relación: $var(hat(beta)) <= var(tilde(beta))$.
 
-== Supuestos de OLS
+== Supuestos de OLS <ols-assumptions>
 
 1. #underline[Linealidad]: El modelo debe ser lineal en los parámetros.
 
@@ -857,6 +857,143 @@ Sean $hat(beta)$ un estimador insesgado fijo y $tilde(beta)$ cualquier otro esti
 
 Bajos los supuestos #circled_numbering(1) a #circled_numbering(5) que se vieron en la sección anterior, el estimador $hat(beta)_"OLS"$ es el mejor estimador lineal insesgado. Esto significa que tiene la menor varianza, como se definió en la @minimum-variance. En inglés se dice que es el _Best Linear Unbiased Estimator_ (BLUE).
 
+= Interpretación de los estimadores
 
+== Deducción de efectos <hyp-test-linear-models>
 
+Al estimar un efecto de una variable independiente $X_k$ sobre la variable dependiente $Y$, se puede hacer un test de hipótesis para ver si ese efecto es significativo o no. Para esto, se define la hipótesis nula como $H_0: beta_k = 0$, y la hipótesis alternativa como $H_A: beta_k != 0$.
 
+El estadístico corresponde al siguiente:
+
+$
+  t = (hat(beta_k) - cancel(beta_k))/("SE"(hat(beta)_k)) ~ normal(0,1) & annotate("(ya que" beta_k = 0))
+$
+
+== Selección del modelo
+
+Definimos un ejemplo de modelo restricto $"(R)"$ y un modelo irrestricto $"(U)"$ como sigue:
+
+$
+  "(R)" & Y = beta_0 + beta_1 X_1 + epsilon \
+  "(U)" & Y = beta_0 + beta_1 X_1 + beta_2 X_2 + beta_3 dot X_1 X_2 + epsilon
+$
+
+donde las hipótesis nula y alternativa que se postulan son, respectivamente, $H_0: beta_2=beta_3 = 0$, $H_A: beta_2 != 0 or beta_3 != 0$. De aquí, se entiende que aplicando $H_0$ sobre $"(U)"$ obtenemos $"(R)"$. 
+
+Se hace un test tomando como estadístico la $F$ de Fisher:
+
+$
+  F = (("SSR"_(R) - "SSR"_(U))\/g)/("SSE"_(U)\/(N - k - 1)) ~ F_(g, N-k-1)
+$
+
+donde $g$ es el número de restricciones en el modelo restringido, que para este ejemplo son $2$ ($beta_2 = 0 and beta_3 = 0$).
+
+Si este test se rechaza, entonces al menos un parámetro $beta_k$ tiene un efecto significativo, que nos diría que la variable $X_k$ sí tiene un efecto sobre $Y$. Este test entonces sirve para agregar variables a nuestro modelo, previamente verificando si aportan. Si no aportan, es decir, su parámetro cumple $beta_k = 0$, se pueden eliminar del modelo. Por otro lado, si el test no se rechaza, entonces se puede concluir que el modelo restringido es mejor que el irrestricto.
+
+En este último caso, para dilucidar cuáles son los $beta_k$ que tienen un efecto significativo, se puede hacer un test de hipótesis para cada uno de ellos. Esto se hace mediante el estadístico $t$ que se definió anteriormente, en la @hyp-test-linear-models.
+
+#note-box[
+  En Python, existe la librería `statsmodels` que permite hacer regresiones con OLS, y tiene más funciones útiles para hacer análisis estadístico.
+]
+
+- Se define el valor de $R^2$ ajustado ($R^2_"adj"$) como $R^2_"adj" = 1 - ("SSE"\/(N-k-1))/("SST"\/(N-1))$. Esta métrica nace de que $R^2$ siempre nos dice que más información es mejor, lo que no siempre es cierto, porque si dicha información no contribuye, se debe hacer una penalización.
+
+#important-box[
+  Cuando hago una observación donde la variable dependiente $Y$ está con un cambio de escala logarítimico (es decir, $Y' = log(Y)$), los $beta_k$ indican la variación porcentual de $Y$ por cada variación $Delta X_k$.
+
+  Si la variable $X_k$ es indicadora, como lo podría ser en el caso de categorías, entonces el $beta_k$ indica la variación porcentual de $Y$ al cambiar de categoría. Por ejemplo, sea el siguiente modelo:
+
+  $
+    log("Salario") = 7-0.025 dot X_"mujer" + epsilon    
+  $
+
+  De acá, podemos desprender que el hecho de ser mujer disminuye el salario en un $2.5" %"$. Si hay $N$ variables categóricas, dejamos $N-1$ dentro y $1$ fuera. La interpretación es la misma.
+]
+
+== Diferencias de interpretación
+
+Pueden haber distintos casos donde podemos interpretar distintas propiedades del modelo. Los más comunes se enumeran a continuación:
+
++ $Y = beta_0 + beta_1 X_1 + epsilon$
+
+  #example[
+    Nivel-Nivel. Supongamos que hicimos una regresión y obtuvimos los coeficientes que nos definen el modelo $Y = 963.191 + 18.501 dot "ROE"$, donde $"ROE"$ es la variable independiente. La interpretación es la siguiente: "si el $"ROE"$ aumenta en una unidad, el salario aumenta en $18.501$".
+  ]
+
++ $log(Y) = beta_0 + beta_1 X_1 + epsilon$
+
+  #example[
+    $log$-nivel. Ahora la regresión es la siguiente, con el mismo ejemplo del salario:
+
+    $
+      log(Y) = 0.584 + 0.083 dot X_"Años educación"      
+    $
+
+    Acá, la interpretación es distinta: "si los años de educación aumentan en una unidad, el salario aumenta en un $8.3" %"$".
+  ]
+
++ $log(Y) = beta_0 + beta_1 log(X_1)$
+
+  #example[
+    $log$-$log$. Para este caso, digamos que la regresión es la siguiente, donde $Y$ es el salario de un CEO de una empresa:
+
+    $
+      log(Y) = 4.822 + 0.257 dot log(X_"Ventas")      
+    $
+
+    La interpretación es: "un aumento de un $1" %"$ de las ventas produce un aumento del $0.257" %"$ en el salario del CEO".
+  ]
+
+= OLS: Causalidad
+
+En esta sección, nos enfocaremos en el supuesto $4$ de OLS visto en la @ols-assumptions, que es el de identificación (endogeneidad). Este supuesto es el que nos dice que $cov(X, epsilon) = 0$. Recordemos que la esperanza del estimador $hat(beta)_"OLS"$ es:
+
+$
+EE[hat(beta)_"OLS"] = beta + (X^T X)^(-1) X^T dot EE[epsilon] = beta + cov(X, epsilon)/var(X)
+$
+
+¿Qué pasa si este supuesto no se cumple? Se buscan contextos de experimentos naturales.
+
+#example[
+  Apesteguia, Palacios Huerta (2010). Se les ocurrió estudiar los penales en partidos de fútbol, porque i) es una tarea "sencilla", ii) mis sujetos de estudio son comparables: profesionales de alto rendimiento en finales de torneos internacionales. Todos tienen las mismas condiciones, iii) el grupo tratamiento-control es aleatorio, es decir, se asigna al azar quién parte.
+
+  El resultado es ganar la definición a penales. Con más del $60" %"$, gana el equipo que parte pateando. Según esta investigación, este es el efecto que tiene el hecho de patear segundo.
+]
+
+#example(title: "Ejemplo 2")[
+  Fabián Waldinger (2010). Él quería estudiar cuál es el impacto que tienen los profesores en el desarrollo académico de los estudiantes de doctorado. Para eso, definió las siguientes variables principales:
+
+  $
+    Y &:= "Éxito profesional" \
+    X_1 &:= "Calidad del profesor" \
+    X_2, dots, X_n &:= "Otros factores del modelo"
+  $
+
+  ¿Cómo definimos el "éxito profesional"? Acá se define el sesgo de autoselección, porque los estudiantes de doctorado de por sí suelen ser buenos estudiantes, entonces muy raramente van a empeorar su rendimiento. Así, se tiene que definir algún suceso azaroso que permita ver el impacto de los profesores.
+
+  El contexto que este investigador encontró estaba ligado con la Alemania Nazi. Muchos departamentos perdieron académicos por no ser partidarios del régimen de la época. Esto permite estudiar el impacto de los profesores en el rendimiento de los estudiantes, porque se puede ver cómo se comportan los estudiantes con distintos profesores.
+
+  El investigador encontró que sí existía un efecto significativo, pues analizó un gráfico donde se ve que el número de publicaciones en buenos _journals_ disminuye después de los despidos. Esto se puede ver a continuación:
+
+  #figure(image("images/classes/diff_and_diff.svg"), caption: [Representación gráfica del efecto de los despidos.]) <diff-in-diff>
+
+  La técnica que se muestra en la figura anterior (@diff-in-diff) se llama "diff-in-diff".
+]
+
+#example(title: "Ejemplo 3")[
+  ¿Tiene efecto la política de sellos en las compras? Para esto, se debe revisar si las ventas de productos con sellos disminuyeron. Esto se puede deber a muchos factores, como las que se mencionan a continuación:
+  
+  - Políticas implementadas por JUNAEB. 
+  
+  - La persona ya era saludable y ahora tiene más información.
+
+  - Cambio de las fórmulas de los productos.
+]
+
+#example(title: "Ejemplo 4")[
+  Compra en línea y retiro en tienda en Estados Unidos. Se quería ver cuál era el impacto que tenía esta opción en las ventas. Se analizó el porcentaje de venta antes, y el porcentaje de venta después, y se encontró que el porcentaje de venta posterior había disminuido.
+
+  La pregunta era: ¿por qué disminiuyeron las ventas? Para solucionar la interrogante, hicieron una comparación con Canadá, donde las tiendas no estaban cerca de los vecindarios, entonces no había posibilidad inmediata de retiro, porque se había encontrado que las personas de Estados Unidos veían las tiendas disponibles e iban directamente en vez de comprar en línea. Si en Canadá el efecto era distinto, entonces la cercanía de las tiendas es un factor que influye.
+]
+
+La gracia de todos estos ejemplos es que se busca un contexto donde el tratamiento y el control sean aleatorios, y no haya sesgo. Esto permite hacer un análisis de causalidad, y no sólo de correlación.
