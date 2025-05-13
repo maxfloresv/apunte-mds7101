@@ -11,7 +11,7 @@
 
 - *¿Qué es una probabilidad?* Una probabilidad es una medida de incertidumbre.
 
-- Tiene dos enfoques: frecuentista y bayesiano. Para el frecuentista, la probabilidad es algo inherente a la naturaleza, y su paradigma de cálculo es $"casos favorables"\/"casos totales"$. Para el bayesiano, la probabilidad es un invento del ser humano, y ya no se usa la fórmula anterior.
+- Tiene dos enfoques: frecuentista y bayesiano. Para el frecuentista, la probabilidad es algo inherente a la naturaleza, y su paradigma de cálculo es $"casos favorables"\/"casos totales"$. Para el bayesiano, la probabilidad es un invento del ser humano, y ya no se usa la fórmula anterior
 
 == Notaciones básicas
 
@@ -158,11 +158,9 @@ $
   corr(X, Y) = (cov(X, Y))/sqrt(var(X) dot var(Y)) = rho(X, Y)
 $
 
-= Repaso de probabilidades e inferencia estadística
-
 Cuando decimos $corr(X,Y) = 0$, quiere decir que no hay información sobre la relación lineal entre $X$ e $Y$. Esto no quiere decir que $X$ e $Y$ sean independientes, porque pueden tener un tipo de relación no lineal, por ejemplo, cuadrática.
 
-#example[Sea $X ~ "U"[-1, 1]$ e $Y = X^2$, con $"U"(a,b)$ una distribución uniforme. Como los momentos de una variable $Z$ que distribuye uniformemente en el intervalo $(a, b)$ se calculan mediante la expresión:
+#example-box[Sea $X ~ "U"[-1, 1]$ e $Y = X^2$, con $"U"(a,b)$ una distribución uniforme. Como los momentos de una variable $Z$ que distribuye uniformemente en el intervalo $(a, b)$ se calculan mediante la expresión:
 
   $
     EE(Z^n) = (b^(n+1)-a^(n+1))/((n+1) dot (b-a))
@@ -177,15 +175,18 @@ Cuando decimos $corr(X,Y) = 0$, quiere decir que no hay información sobre la re
     &= EE(X^3) = bold(0) 
   $
 
-  pero $Y$ sí depende de $X$, entonces no pueden ser independientes.]
+  pero $Y$ sí depende de $X$, entonces no pueden ser independientes.
+]
 
-== Inferencia estadística <statistic-inference>
+#pagebreak(weak: true)
+
+= Inferencia estadística <statistic-inference>
 
 La inferencia estadística es una rama de la estadística que se encarga de hacer predicciones o caracterizaciones sobre una población a partir de una muestra.
 
 Normalmente, habrá una variable $Y ~ f(X)$, con $f$ una función genérica llamada modelo, que encuentra una relación. $Y$ se llama variable endógena, porque depende de $X$. Será la variable que estudiaremos. Por otro lado, $X$ se llama variable exógena, porque en el mundo ideal no depende de nada.
 
-#example[
+#example-box[
   Definimos las variables aleatorias $Y :=$ demanda por poleras, y $X :=$ tallas (estaturas). Acá surge naturalmente un problema: necesitamos estudiar más a fondo el caso, pues nunca conoceremos la media o desviación estándar exacta de la población. Para esto, definiremos una herramienta que se verá en la @estimators.
 ]
 
@@ -305,7 +306,7 @@ Basándose en esto se puede definir una nueva propiedad para los estimadores, qu
    lim_(n->infinity) PP(abs(T(X_n)-theta)<epsilon)=1
  $
 
-=== Ejemplos de sesgo y consistencia
+=== Ejemplos de sesgo y consistencia <examples-bias-consistency>
 
 Un estimador puede ser insesgado y no consistente, o tener otro tipo de variaciones. A continuación, se enlistan ejemplos que dan cuenta de estas variaciones:
 
@@ -356,8 +357,6 @@ es un estimador consistente de $mu$, es decir, $overline(X_n) ->_(PP) mu$.
 
 Sea $X_n$ es una secuencia de variables aleatorias con $X_n ~ f_n (dot)$, y además $X ~ f(dot)$. Si para cada $x$ donde $f(x)$ es continua se cumple que $f_n (x) -->_(n -> infinity) f(x)$ entonces decimos que $X_n$ converge en distribución a $X$, anotado $X_n ->_d X$. En palabras coloquiales, esta es una convergencia de histogramas.
 
-= Teoría asintótica e introducción al test de hipótesis
-
 == Teorema Central del Límite (TCL) <tcl>
 
 Sea ${X_i}_(i=1)^N$ una muestra aleatoria i.i.d. con $EE(X_i) = mu < infinity$ y $var(X_i) = sigma^2 < infinity$ para todo $i in {1, 2, dots, N}$. Entonces:
@@ -369,8 +368,11 @@ $
 
 donde $sigma\/sqrt(N)$ es la varianza de la variable aleatoria $overline(X_n)$.
 
-
 La "gracia" de este teorema es que no importa cómo distribuyan las variables aleatorias ${X_i}_(i=1)^N$, siempre y cuando cumplan con las condiciones del TCL, la suma de ellas se comportará como una normal estándar. Una consecuencia directa es que cuando tenemos muestras grandes, podemos calcular los intervalos de confianza usando una $normal(0,1)$, dado que el estadístico $t$ converge a dicha distribución.
+
+#pagebreak(weak: true)
+
+= Introducción a los tests de hipótesis
 
 == Test de hipótesis <hypothesis-test>
 
@@ -386,8 +388,8 @@ Una pregunta que surge naturalmente es: ¿podemos afirmar que el medicamento es 
 
 - Hipótesis nula ($H_0$): Plantea que "no existe un efecto", y se asume que es cierta hasta que tengamos evidencia suficiente para rechazar esta afirmación. Afecta el tipo de experimento o procedimiento, y los datos que son recopilados.
 
-  #example[
-    _Efectividad de la urgencia de un hospital._ Están las readmisiones, muertes hospitalarias, y la duración de la estadía. Si uno mira estos indicadores, suelen ser altos, entonces una conclusión apresurada sería decir que la urgencia funciona mal. Esto no necesariamente es cierto, porque los pacientes que entran a urgencia ya vienen con una situación grave previa.
+  #example-box(title: "Efectividad de la urgencia de un hospital.")[
+    Están las readmisiones, muertes hospitalarias, y la duración de la estadía. Si uno mira estos indicadores, suelen ser altos, entonces una conclusión apresurada sería decir que la urgencia funciona mal. Esto no necesariamente es cierto, porque los pacientes que entran a urgencia ya vienen con una situación grave previa.
   ]
 
 - Hipótesis alternativa ($H_A$ ó $H_1$). Corresponde a lo opuesto a la hipótesis nula, pues representa la existencia de un efecto. Generalmente, es lo que queremos demostrar.
@@ -511,23 +513,24 @@ Hay tres formas de analizar un test de hipótesis, y todas son equivalentes. Par
 
 + Comparar el estadístico $t$ con el valor tabulado de la distribución.
 
-  - #example[Si $alpha=0.05$, debo buscar el valor para $alpha\/2 = 0.025$ en la _tail probability_ de la tabla de distribución de una $t$-Student con $N+M-2$ grados de libertad. El valor de $alpha$ se divide en $2$ dado que el test de diferencia de medias es de $2$ colas. Si $t$ es mayor que el valor tabulado, se rechaza la hipótesis nula. Si $t$ es menor que el valor tabulado, no se puede rechazar la hipótesis nula.]
+  #example-box[Si $alpha=0.05$, debo buscar el valor para $alpha\/2 = 0.025$ en la _tail probability_ de la tabla de distribución de una $t$-Student con $N+M-2$ grados de libertad. El valor de $alpha$ se divide en $2$ dado que el test de diferencia de medias es de $2$ colas. Si $t$ es mayor que el valor tabulado, se rechaza la hipótesis nula. Si $t$ es menor que el valor tabulado, no se puede rechazar la hipótesis nula.
 
-    #note-box[
-      Si la hipótesis alternativa contiene $<$ o $>$, se dice que es un test de una cola. Si la condición es $!=$, entonces es un test de dos colas.
-    ]
+  Si la hipótesis alternativa contiene $<$ o $>$, se dice que es un test de una cola. Si la condición es $!=$, entonces es un test de dos colas.
+  ]
 
 + Calcular el $p$-valor y comparar con $alpha$.
 
-  - #example[
+  #example-box[
     Es similar al método anterior, salvo que ahora tenemos los grados de libertad (`df`; filas) y el valor del estadístico $t$ (celdas de la tabla). Con esto, buscamos el $p$-valor más cercano en la tabla de la $t$-Student (_tail probability_; columnas). Si el $p$-valor es menor que $alpha$, se rechaza la hipótesis nula. Si el $p$-valor es mayor que $alpha$, no se puede rechazar la hipótesis nula.
   ]
 
 + Mirar el intervalo de confianza $"C"(overline(X)-overline(Y)) = overline(X)-overline(Y) plus.minus Z_alpha dot std(overline(X)-overline(Y))$
 
-  - #example[¿Qué pasa si el intervalo de confianza del $95 \%$ no contiene el $0$? Entonces, se rechaza la hipótesis nula, porque esta asumía que la diferencia de medias era $0$. Si el intervalo de confianza contiene el $0$, no se puede rechazar la hipótesis nula.]
+  #example-box[¿Qué pasa si el intervalo de confianza del $95 \%$ no contiene el $0$? Entonces, se rechaza la hipótesis nula, porque esta asumía que la diferencia de medias era $0$. Si el intervalo de confianza contiene el $0$, no se puede rechazar la hipótesis nula.]
 
 Si rechazamos la hipótesis nula, tomando el ejemplo, podemos aseverar que hay una diferencia de medias significativa entre los grupos.
+
+#pagebreak(weak: true)
 
 = Ejemplos de tests de hipótesis
 
@@ -535,7 +538,7 @@ Si rechazamos la hipótesis nula, tomando el ejemplo, podemos aseverar que hay u
 
 Los tests de hipótesis paramétricos se usan cuando se conoce la distribución de las variables y se puede hacer inferencia sobre sus parámetros. Por ejemplo: $t$-test, test de diferencia en varianzas ($F$-Fisher), y ANOVA.
 
-Por otro lado, los tests de hipótesis no paramétricos ("distribution-free test") son los que se hacen cuando no conocemos las distribuciones, o no se quiere hacer supuestos sobre las distribuciones. Por ejemplo: Mann-Whitney (U-test), Kruskal-Kallis (H-test), y Kolmogorov-Smirnov (KS-test).
+Por otro lado, los tests de hipótesis no paramétricos ("distribution-free test") son los que se hacen cuando no conocemos las distribuciones, o no se quiere hacer supuestos sobre las distribuciones. Por ejemplo: Mann-Whitney ($U$-test), Kruskal-Kallis ($H$-test), y Kolmogorov-Smirnov ($"KS"$-test).
 
 === Test de Kolmogorov-Smirnov
 
@@ -555,8 +558,8 @@ $
   D_(n,m) > C(alpha) dot sqrt((n+m)/(n dot m)); quad C(alpha) = sqrt(-ln(alpha/2) dot 1/2)
 $
 
-#example[
-  _Analizando fallas en equipos mineros._ Definamos las siguientes variables aleatorias:
+#example-box(title: "Analizando fallas en equipos mineros.")[
+  Definamos las siguientes variables aleatorias:
 
   $
     X_i: i"-ésima presión sobre el equipo"; quad Y = cases(
@@ -597,12 +600,12 @@ $
 
 Cuando rechazo $H_0$, se puede concluir que al menos una de las hipótesis no es cierta estadísticamente.
 
-=== Test de ANOVA
+=== Test ANOVA
 
 La idea de este test es extender el $t$-test, o test de diferencia de medias, a más de dos grupos.
 
-#example[
-  Supongamos que queremos testear la efectividad de un medicamento. Tenemos $16$ regiones, y a cada una le envío el medicamento. Tenemos $I$ grupos ${1, dots, I}$ y $J$ observaciones ${1, dots, J}$, y además definimos $Y_(i j) : "Observación" j "del grupo" i$. Esta variable se define como:
+#example-box(title: "Efectividad de un medicamento.")[
+  Tenemos $16$ regiones, y a cada una le envío el medicamento. Tenemos $I$ grupos ${1, dots, I}$ y $J$ observaciones ${1, dots, J}$, y además definimos $Y_(i j) : "Observación" j "del grupo" i$. Esta variable se define como:
 
   $
     Y_(i j) = mu + alpha_i + epsilon_(i j)
@@ -646,7 +649,9 @@ Los distintos elementos que componen un _boxplot_, para $3$ grupos $G_1$, $G_2$ 
   Un gráfico similar para ver la distribución de los datos es el _violinplot_. Lo importante es que está implementado en librerías populares de visualización de información como `seaborn` en Python.
 ]
 
-= Introducción a OLS y sus supuestos
+#pagebreak(weak: true)
+
+= Introducción a OLS y sus supuestos <intro-ols-and-assumptions>
 
 Hasta ahora, hemos trabajado sobre la identificación de fenómenos, sin embargo, no hemos visto cómo predecir. Esto es algo que se trabajará en esta sección. Se introduce entonces una notación que mencionamos en la @statistic-inference:
 
@@ -666,7 +671,7 @@ $
   L = Omega times Omega -> RR 
 $
 
-#example[
+#example-box[
   Sea $theta in Omega$ y $a in Omega$ un estimador, entonces el costo de estimar $theta$ mediante $a$ está dado por la función de costo $L(theta, a)$.
 ]
 
@@ -686,8 +691,8 @@ $
   Y = vec(Y_1, dots, Y_n); quad X = mat(1, X_(1,1), dots, X_(k,1); 1, X_(1,2), dots, X_(k,2); dots.v, dots.v, dots, dots.v; 1, X_(1,n), dots, X_(k,n)); quad bold(beta) = vec(beta_0, beta_1, dots, beta_k); quad bold(epsilon) = vec(epsilon_1, dots, epsilon_n)
 $
 
-#example(title: "Ejemplo de aplicación")[
-  El precio de un vino, analizado mediante un gráfico donde la variable independiente son los años desde la cosecha, y la variable dependiente es el precio. Podemos entonces definir un modelo simple que tenga la siguiente relación, con $Y = Y_"precio"$ y $X = X_"años cosecha"$:
+#example-box(title: "Precio de un vino vs. años desde la cosecha.")[
+  Podemos definir un modelo simple que tenga la siguiente relación, con $Y = Y_"precio"$ y $X = X_"años cosecha"$:
 
   $
     Y = beta_0 + beta_1 dot X + epsilon
@@ -727,8 +732,8 @@ $
 
 Esta última expresión toma especial importancia en la definición de un requisito para el uso de los mínimos cuadrados ordinarios. Se requiere que $X^T X$ sea invertible, es decir, las columnas de $X$ no pueden ser linealmente dependientes. 
 
-#example[
-  ¿Cuándo no usar OLS, dado que $X^T X$ no es invertible? Tomemos un caso donde $X$ es linealmente dependiente (l. d.):
+#example-box(title: [¿Cuándo no usar OLS, dado que $X^T X$ no es invertible?])[
+ Tomemos un caso donde $X$ es linealmente dependiente (l. d.):
 
   $
     X_"mujer" = cases(
@@ -744,9 +749,7 @@ Esta última expresión toma especial importancia en la definición de un requis
   
   La solución es desprenderse de alguna de las dos variables, y esto depende de la interpretación que se le quiera dar al modelo. Por ejemplo, si se quiere ver el efecto de ser mujer, entonces se usa $X_"mujer"$ y se deja fuera $X_"hombre"$, y viceversa.
 
-  #note-box[
-    Generalmente, un _solver_ devolverá `NaN` cuando encuentre que la matriz $X^T X$ no es invertible.
-  ]
+  Generalmente, un _solver_ devolverá `NaN` cuando encuentre que la matriz $X^T X$ no es invertible.
 ]
 
 Finalmente, nos cuestionaremos la insesgadez del estimador $hat(beta)_"OLS"$. Para ello, desarrollemos la expresión de su esperanza:
@@ -784,7 +787,7 @@ Sean $hat(beta)$ un estimador insesgado fijo y $tilde(beta)$ cualquier otro esti
 
 1. #underline[Linealidad]: El modelo debe ser lineal en los parámetros.
 
-  #example[
+  #example-box[
     El siguiente modelo no es lineal en los parámetros, y por lo tanto, no cumple este supuesto:
 
     $
@@ -841,7 +844,7 @@ Sean $hat(beta)$ un estimador insesgado fijo y $tilde(beta)$ cualquier otro esti
 
   entonces no hay ninguna variable independiente que sea parcialmente explicada por el error.
 
-  #example[
+  #example-box[
     Tenemos el siguiente modelo, con $Y :=$ Salario, y $X :=$ Educación:
 
     $
@@ -856,6 +859,8 @@ Sean $hat(beta)$ un estimador insesgado fijo y $tilde(beta)$ cualquier otro esti
 == Teorema de Gauss-Markov
 
 Bajos los supuestos #circled_numbering(1) a #circled_numbering(5) que se vieron en la sección anterior, el estimador $hat(beta)_"OLS"$ es el mejor estimador lineal insesgado. Esto significa que tiene la menor varianza, como se definió en la @minimum-variance. En inglés se dice que es el _Best Linear Unbiased Estimator_ (BLUE).
+
+#pagebreak(weak: true)
 
 = Interpretación de los estimadores
 
@@ -916,14 +921,14 @@ Pueden haber distintos casos donde podemos interpretar distintas propiedades del
 
 + $Y = beta_0 + beta_1 X_1 + epsilon$
 
-  #example[
-    Nivel-Nivel. Supongamos que hicimos una regresión y obtuvimos los coeficientes que nos definen el modelo $Y = 963.191 + 18.501 dot "ROE"$, donde $"ROE"$ es la variable independiente. La interpretación es la siguiente: "si el $"ROE"$ aumenta en una unidad, el salario aumenta en $18.501$".
+  #example-box(title: "Nivel-Nivel.")[
+   Supongamos que hicimos una regresión y obtuvimos los coeficientes que nos definen el modelo $Y = 963.191 + 18.501 dot "ROE"$, donde $"ROE"$ es la variable independiente. La interpretación es la siguiente: "si el $"ROE"$ aumenta en una unidad, el salario aumenta en $18.501$".
   ]
 
 + $log(Y) = beta_0 + beta_1 X_1 + epsilon$
 
-  #example[
-    $log$-nivel. Ahora la regresión es la siguiente, con el mismo ejemplo del salario:
+  #example-box(title: [$log$-nivel.])[
+    Ahora la regresión es la siguiente, con el mismo ejemplo del salario:
 
     $
       log(Y) = 0.584 + 0.083 dot X_"Años educación"      
@@ -934,8 +939,8 @@ Pueden haber distintos casos donde podemos interpretar distintas propiedades del
 
 + $log(Y) = beta_0 + beta_1 log(X_1)$
 
-  #example[
-    $log$-$log$. Para este caso, digamos que la regresión es la siguiente, donde $Y$ es el salario de un CEO de una empresa:
+  #example-box(title: [$log$-$log$.])[
+    Para este caso, digamos que la regresión es la siguiente, donde $Y$ es el salario de un CEO de una empresa:
 
     $
       log(Y) = 4.822 + 0.257 dot log(X_"Ventas")      
@@ -943,6 +948,8 @@ Pueden haber distintos casos donde podemos interpretar distintas propiedades del
 
     La interpretación es: "un aumento de un $1" %"$ de las ventas produce un aumento del $0.257" %"$ en el salario del CEO".
   ]
+
+#pagebreak(weak: true)
 
 = OLS: Causalidad
 
@@ -954,14 +961,14 @@ $
 
 ¿Qué pasa si este supuesto no se cumple? Se buscan contextos de experimentos naturales.
 
-#example[
-  Apesteguia, Palacios Huerta (2010). Se les ocurrió estudiar los penales en partidos de fútbol, porque i) es una tarea "sencilla", ii) mis sujetos de estudio son comparables: profesionales de alto rendimiento en finales de torneos internacionales. Todos tienen las mismas condiciones, iii) el grupo tratamiento-control es aleatorio, es decir, se asigna al azar quién parte.
+#example-box(title: "Apesteguia, Palacios Huerta (2010).")[
+  Se les ocurrió estudiar los penales en partidos de fútbol, porque i) es una tarea "sencilla", ii) mis sujetos de estudio son comparables: profesionales de alto rendimiento en finales de torneos internacionales. Todos tienen las mismas condiciones, iii) el grupo tratamiento-control es aleatorio, es decir, se asigna al azar quién parte.
 
   El resultado es ganar la definición a penales. Con más del $60" %"$, gana el equipo que parte pateando. Según esta investigación, este es el efecto que tiene el hecho de patear segundo.
 ]
 
-#example(title: "Ejemplo 2")[
-  Fabián Waldinger (2010). Él quería estudiar cuál es el impacto que tienen los profesores en el desarrollo académico de los estudiantes de doctorado. Para eso, definió las siguientes variables principales:
+#example-box(title: "Fabián Waldinger (2010).")[
+  Él quería estudiar cuál es el impacto que tienen los profesores en el desarrollo académico de los estudiantes de doctorado. Para eso, definió las siguientes variables principales:
 
   $
     Y &:= "Éxito profesional" \
@@ -980,20 +987,146 @@ $
   La técnica que se muestra en la figura anterior (@diff-in-diff) se llama "diff-in-diff".
 ]
 
-#example(title: "Ejemplo 3")[
-  ¿Tiene efecto la política de sellos en las compras? Para esto, se debe revisar si las ventas de productos con sellos disminuyeron. Esto se puede deber a muchos factores, como las que se mencionan a continuación:
-  
-  - Políticas implementadas por JUNAEB. 
-  
-  - La persona ya era saludable y ahora tiene más información.
-
-  - Cambio de las fórmulas de los productos.
-]
-
-#example(title: "Ejemplo 4")[
-  Compra en línea y retiro en tienda en Estados Unidos. Se quería ver cuál era el impacto que tenía esta opción en las ventas. Se analizó el porcentaje de venta antes, y el porcentaje de venta después, y se encontró que el porcentaje de venta posterior había disminuido.
+#example-box(title: "Compra en línea y retiro en tienda en Estados Unidos.")[
+  Se quería ver cuál era el impacto que tenía esta opción en las ventas. Se analizó el porcentaje de venta antes, y el porcentaje de venta después, y se encontró que el porcentaje de venta posterior había disminuido.
 
   La pregunta era: ¿por qué disminiuyeron las ventas? Para solucionar la interrogante, hicieron una comparación con Canadá, donde las tiendas no estaban cerca de los vecindarios, entonces no había posibilidad inmediata de retiro, porque se había encontrado que las personas de Estados Unidos veían las tiendas disponibles e iban directamente en vez de comprar en línea. Si en Canadá el efecto era distinto, entonces la cercanía de las tiendas es un factor que influye.
 ]
 
 La gracia de todos estos ejemplos es que se busca un contexto donde el tratamiento y el control sean aleatorios, y no haya sesgo. Esto permite hacer un análisis de causalidad, y no sólo de correlación.
+
+#pagebreak(weak: true)
+
+= Estimación paramétrica
+
+Habíamos descrito en la @statistic-inference que un modelo se puede anotar como $Y = f(X)$. Hasta este punto, sabemos que un modelo depende de parámetros, que generalmente se anotan con la letra $theta$. Así, el modelo toma la forma $Y = f(X bar theta)$.
+
+En esta sección, veremos más métodos para estimar los parámetros, y así tener alternativas al método de los mínimos cuadrados ordinarios (OLS) visto en la @intro-ols-and-assumptions.
+
+== Método de los momentos
+
+Se basa en estimar los momentos de la distribución propuesta. El $k$-momento de una variable aleatoria $X$ se define como $mu_k = EE[X^k]$, para $k>=1$ natural. La estimación de los parámetros se hace mediante la siguiente fórmula:
+
+$
+  hat(mu)_k = 1/N sum_(i=1)^N X_i^k; quad k = 1, dots, K
+$
+
+#example-box(title: "Distribución de Poisson.")[
+  Esta distribución se ocupa para contar. Si $X$ sigue esta distribución, se anota $X ~ Poisson(lambda)$, donde $lambda$ es el parámetro.
+
+  $
+    PP(X=x) = (lambda^x e^(-lambda))/x!; quad x in NN_0, quad EE[X] = lambda
+  $
+
+  Tenemos una muestra ${X_i}_(i=1)^N$. La estimación por el método de los momentos del primer momento es la siguiente:
+
+  $
+    hat(mu)_1 = 1/N sum_(i=1)^N X_i = overline(X) = hat(lambda)
+  $
+
+  ya que $mu = EE[X] = lambda$, y además, $overline(X) = hat(mu)$.
+]
+
+#example-box(title: "Distribución normal.")[
+  Se anota $X ~ normal(mu, sigma^2)$, donde $mu$ es la media y $sigma^2$ la varianza. Denotemos $mu_1 = EE[X]$, y $mu_2 = EE[X^2]$, y además sabemos que:
+  
+  $
+    sigma^2 = var(X) = EE[X^2] - (EE[X])^2 = mu_2 - mu_1^2
+  $
+
+  Si tenemos una muestra aleatoria ${X_i}_(i=1)^N$, la estimación por el método de los momentos del primer momento es la siguiente:
+
+  $
+    hat(mu)_1 = 1/N sum_(i=1)^N X_i = overline(X)
+  $
+
+  y la estimación del segundo momento es:
+
+  $
+    hat(mu)_2 = 1/N sum_(i=1)^N X_i^2
+  $
+
+  Con la relación encontrada para $sigma^2$, podemos estimar la varianza como:
+
+  $
+    hat(sigma^2) = hat(mu)_2 - hat(mu)_1^2 = 1/N sum_(i=1)^N X_i^2 - (1/N sum_(i=1)^N X_i)^2 = 1/N sum_(i=1)^N (X_i - overline(X))^2
+  $
+
+  Este último estimador es sesgado y consistente, y lo vimos previamente en la @examples-bias-consistency.
+]
+
+== Método de máxima verosimilitud (MLE)
+
+Sean $X=(X_1, X_2, dots, X_N)$ variables aleatorias con densidad conjunta.
+
+$
+  f(X, theta) = f(X_1, X_2, dots, X_N, theta)
+$
+
+con $theta in Theta$, donde $Theta$ es un espacio paramétrico. Entonces, la función de verosimilitud se define como:
+
+$
+  L &: Theta -> [0, +infinity) \
+  theta &|-> f(X bar theta)
+$
+
+Esto se anota como $L(theta bar X) = f(X bar theta)$, donde $X$ es el contexto, es decir, las variables aleatorias con las cuales se trabaja.
+
+El objetivo es buscar $hat(theta)_"MLE"$, que es el estimador de máxima verosimilitud, es decir, el que maximiza la función $L$. Este parámetro entonces se define como:
+
+$
+  hat(theta)_"MLE" = arg max_(theta in Theta) L(theta bar X) = arg max_(theta in Theta) f(X bar theta)
+$
+
+#note-box[
+  La función de verosimilitud es una función de $theta$, y no es una PDF porque no está normalizada, por lo tanto, no se puede usar para calcular probabilidades.
+]
+
+Tenemos que tener las siguientes consideraciones:
+
++ Necesitamos asumir una distribución, es decir, una función $f$.
+
++ Las variables aleatorias se asumen independientes e idénticamente distribuidas (i.i.d.). De esta forma, podemos escribir:
+
+  $
+    L(theta bar X) = f(X_1, X_2, dots, X_N bar theta) = product_(i=1)^N f(X_i bar theta)
+  $
+
+  que es un cálculo más simple.
+
+Computacionalmente, es más fácil trabajar con el logaritmo de la función de verosimilitud, que se define como:
+
+$
+  ell(theta) = ln (L(theta)) = sum_(i=1)^N ln f(X_i bar theta)
+$
+
+Finalmente, como la función logaritmo conserva el valor maximizador, se cumple que:
+
+$
+  hat(theta)_"MLE" &= arg max_(theta in Theta) L(theta bar X) \
+  &= arg max_(theta in Theta) ell(theta bar X)  \
+  &= arg max_(theta in Theta) sum_(i=1)^N ln f(X_i bar theta)
+$
+
+#example-box(title: [Cálculo de $hat(lambda)_"MLE"$ con una distribución de Poisson.])[
+  Tenemos una variable $X ~ Poisson(lambda)$. La función de verosimilitud es:
+
+  $
+    L(lambda bar X) &= product_(i=1)^N (lambda^(X_i) e^(-lambda))/(X_i !) \
+    ell(lambda bar X) &= sum_(i=1)^N ln ((lambda^(X_i) e^(-lambda))/ (X_i !)) \
+  $
+
+  Aplicando propiedades de suma y resta de logaritmos, se obtiene:
+
+  $
+    ell(lambda bar X) &= ln(lambda) sum_(i=1)^N X_i - sum_(i=1)^N ln (X_i !) - N lambda \
+  $
+
+  El estimador de máxima verosimilitud se calcula mediante la condición de primer orden:
+
+  $
+    hat(lambda)_"MLE" &-> lr((partial ell (lambda))/(partial lambda)|_(lambda = hat(lambda)_"MLE")) = 0 \
+    &<==> 1 / (hat(lambda)_"MLE") sum_(i=1)^N X_i - N = 0 \
+    &<==> hat(lambda)_"MLE" = 1/N sum_(i=1)^N X_i = overline(X)
+  $
+]
