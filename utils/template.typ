@@ -20,6 +20,7 @@
     fill: black
   )
   set par(justify: true, first-line-indent: (amount: 1.5em, all: true))
+  show block: set par(first-line-indent: 0pt)
   set table(stroke: 0.5pt)
   set list(indent: 5pt)
   set enum(numbering: circled_numbering, indent: 5pt)

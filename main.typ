@@ -334,7 +334,7 @@ Un estimador puede ser insesgado y no consistente, o tener otro tipo de variacio
 
   Este estimador tiene sesgo, porque su valor esperado no es igual al parámetro estimado $sigma^2$. Sin embargo, es consistente, porque converge en probabilidad al parámetro de interés. Esto último se confirma porque el sesgo es $-sigma^2\/N$, que tiende a $0$ cuando $N -> infinity$.
 
-=== Caracterización de la consistencia
+=== Caracterización de la consistencia <caracterization-consistency>
 
 Si $T(X_n)$ es estimador insesgado de $theta$, es decir, $E(T(X_n)) = theta$, y además $var(T(X_n)) -> 0$ cuando $n -> infinity$, entonces $T(X_n)$ es un estimador consistente de $theta$. Matemáticamente:
 
@@ -959,12 +959,16 @@ $
 EE[hat(beta)_"OLS"] = beta + (X^T X)^(-1) X^T dot EE[epsilon] = beta + cov(X, epsilon)/var(X)
 $
 
-¿Qué pasa si este supuesto no se cumple? Se buscan contextos de experimentos naturales.
+¿Qué pasa si este supuesto no se cumple? Se buscan contextos de experimentos naturales, es decir, que no fueron planeados como un experimento del investigador, sino que se dieron de manera espontánea en la vida real.
+
+== Ejemplos de contextos experimentales naturales
+
+Veremos estudios que se realizaron en distintos contextos, y que se pueden usar para estudiar fenómenos de causalidad. Estos estudios son ejemplos de experimentos naturales, donde se busca un contexto en el cual los grupos de tratamiento y control sean aleatorios, y no haya sesgo. Esto permite hacer un análisis de causalidad, y no sólo de correlación.
 
 #example-box(title: "Apesteguia, Palacios Huerta (2010).")[
   Se les ocurrió estudiar los penales en partidos de fútbol, porque i) es una tarea "sencilla", ii) mis sujetos de estudio son comparables: profesionales de alto rendimiento en finales de torneos internacionales. Todos tienen las mismas condiciones, iii) el grupo tratamiento-control es aleatorio, es decir, se asigna al azar quién parte.
 
-  El resultado es ganar la definición a penales. Con más del $60" %"$, gana el equipo que parte pateando. Según esta investigación, este es el efecto que tiene el hecho de patear segundo.
+  El resultado es ganar la definición a penales. Con más del $60" %"$, gana el equipo que parte pateando. Según esta investigación, este es el efecto que tiene el hecho de patear segundo. Esto se puede usar para analizar fenómenos que involucren cuánto afecta la presión en la toma de una decisión.
 ]
 
 #example-box(title: "Fabián Waldinger (2010).")[
@@ -978,9 +982,9 @@ $
 
   ¿Cómo definimos el "éxito profesional"? Acá se define el sesgo de autoselección, porque los estudiantes de doctorado de por sí suelen ser buenos estudiantes, entonces muy raramente van a empeorar su rendimiento. Así, se tiene que definir algún suceso azaroso que permita ver el impacto de los profesores.
 
-  El contexto que este investigador encontró estaba ligado con la Alemania Nazi. Muchos departamentos perdieron académicos por no ser partidarios del régimen de la época. Esto permite estudiar el impacto de los profesores en el rendimiento de los estudiantes, porque se puede ver cómo se comportan los estudiantes con distintos profesores.
+  El contexto que este investigador encontró estaba ligado con un régimen totalitario en la historia mundial. Muchos departamentos perdieron académicos por no ser partidarios del régimen histórico de esa época. Esto permite estudiar el impacto de los profesores en el rendimiento de los estudiantes, porque se puede ver cómo se comportan los estudiantes con distintos profesores.
 
-  El investigador encontró que sí existía un efecto significativo, pues analizó un gráfico donde se ve que el número de publicaciones en buenos _journals_ disminuye después de los despidos. Esto se puede ver a continuación:
+  El investigador encontró que sí existía un efecto significativo, pues analizó un gráfico donde se ve que el número de publicaciones en buenos _journals_ disminuyó después de los despidos. Esto se puede ver a continuación:
 
   #figure(image("images/classes/diff_and_diff.svg"), caption: [Representación gráfica del efecto de los despidos.]) <diff-in-diff>
 
@@ -992,8 +996,6 @@ $
 
   La pregunta era: ¿por qué disminiuyeron las ventas? Para solucionar la interrogante, hicieron una comparación con Canadá, donde las tiendas no estaban cerca de los vecindarios, entonces no había posibilidad inmediata de retiro, porque se había encontrado que las personas de Estados Unidos veían las tiendas disponibles e iban directamente en vez de comprar en línea. Si en Canadá el efecto era distinto, entonces la cercanía de las tiendas es un factor que influye.
 ]
-
-La gracia de todos estos ejemplos es que se busca un contexto donde el tratamiento y el control sean aleatorios, y no haya sesgo. Esto permite hacer un análisis de causalidad, y no sólo de correlación.
 
 #pagebreak(weak: true)
 
@@ -1070,9 +1072,9 @@ $
   theta &|-> f(X bar theta)
 $
 
-Esto se anota como $L(theta bar X) = f(X bar theta)$, donde $X$ es el contexto, es decir, las variables aleatorias con las cuales se trabaja.
+y representa una medida de la explicación de los datos según el modelo $f$, dado $theta$. Esto se anota como $L(theta bar X) = f(X bar theta)$, donde $X$ es el contexto, es decir, las variables aleatorias con las cuales se trabaja.
 
-El objetivo es buscar $hat(theta)_"MLE"$, que es el estimador de máxima verosimilitud, es decir, el que maximiza la función $L$. Este parámetro entonces se define como:
+Como queremos los parámetros que mejor expliquen los datos, el objetivo es buscar $hat(theta)_"MLE"$, que es el estimador de máxima verosimilitud, es decir, el que maximiza la función $L$. Este parámetro entonces se define como:
 
 $
   hat(theta)_"MLE" = arg max_(theta in Theta) L(theta bar X) = arg max_(theta in Theta) f(X bar theta)
@@ -1125,8 +1127,243 @@ $
   El estimador de máxima verosimilitud se calcula mediante la condición de primer orden:
 
   $
-    hat(lambda)_"MLE" &-> lr((partial ell (lambda))/(partial lambda)|_(lambda = hat(lambda)_"MLE")) = 0 \
+    hat(lambda)_"MLE" &-> lr((partial ell (lambda))/(partial lambda)|)_(lambda = hat(lambda)_"MLE") = 0 \
     &<==> 1 / (hat(lambda)_"MLE") sum_(i=1)^N X_i - N = 0 \
     &<==> hat(lambda)_"MLE" = 1/N sum_(i=1)^N X_i = overline(X)
+  $
+]
+
+#pagebreak(weak: true)
+
+= Método de máxima verosimilitud
+
+En el ejemplo anterior, no verificamos la condición de segundo orden para ver que efectivamente es un máximo global. Para verificar esto, se usa el hessiano:
+
+$
+  H_N (theta ; Y bar X) = (partial^2 ell (theta))/(partial theta theta^T)
+$
+
+Su estimador se calcula de la siguiente forma:
+
+$
+  hat(H) = lr(-(partial^2)/(partial theta^2) (1/N sum_(i=1)^N ln f(X_i bar theta))|)_(theta = hat(theta)_"MLE")
+$
+
+el cual tiene que ser definido negativo para asegurar la existencia de un máximo. De esta forma, se calculan los errores asociados a la estimación como sigue:
+
+$
+  "SE"(hat(theta)_"MLE") = sqrt(-(hat(H) dot N)^(-1)); quad "SE"(hat(theta)_"MLE") = sqrt([N dot I(hat(theta))]^(-1))
+$
+
+donde $I$ es la matriz de información de Fisher, que se define como:
+
+$
+  I(theta) = EE[(partial)/(partial theta) ln f(X bar theta)]^2
+$
+
+¿Es $hat(theta)_"MLE"$ un buen estimador? ¿Es insesgado? ¿Es consistente? ¿Cómo es su varianza? Esto depende de la elección de la función de verosimiliud $f$, como vemos en la matriz $I$.
+
+== Condiciones de regularización
+
+Recordemos que $L(theta)$ depende de la distribución conjunta de las variables y los parámetros.
+
+- #underline[Condición R1]: Las primeras $3$ derivadas de $ln f(X bar theta)$ con respecto a $theta$ deben ser continuas y finitas para casi todo $x_i$ y $forall theta in Theta$. Esta condición asegura la existencia de ciertas expansiones de Taylor y que la varianza esa finita. 
+
+  Cuando se cumple esta condición, se dice que el estimador $hat(theta)_"MLE"$ es asintóticamente insesgado, y como su varianza es finita y tiende a $0$, se dice que es consistente, por el teorema visto en la @caracterization-consistency.
+
+- #underline[Condición R2]: Se tienen las condiciones necesarias para obtener la esperanza de la primera y segunda derivada de $ln f(X bar theta)$, es decir, se deben poder capturar los siguientes términos:
+
+  $
+    EE[(partial)/(partial theta) ln f(X bar theta)]; quad EE[(partial^2)/(partial theta theta^T) ln f(X bar theta)]
+  $
+
+  Con esto, podemos asegurar una convergencia en distribución a una normal, es decir:
+
+  $
+    & sqrt(N dot I(theta_0)) dot (hat(theta)_"MLE" - theta_0) ->_d normal(0,1) \
+    & sqrt(N) dot (hat(theta)_"MLE" - theta_0) ->_d normal(0, -H^(-1)) \
+  $
+  
+  donde $theta_0$ es el parámetro original (real), $hat(theta)_"MLE" - theta_0$ es la estimación del error MLE, y $-H^(-1)$ es el hessiano, la varianza asintótica.
+
+- #underline[Condición R3]: Para todo parámetro $theta$, la siguiente función:
+
+  $
+    abs((partial^3 ln f(X bar theta))/(partial theta_i partial theta_j partial theta_k))
+  $
+
+  es menor que una función con esperanza finita. Esta condición permite truncar la expansión de Taylor, y permite demostrar que el estimador cumple la cota de Cramer-Rao, que se verá en la @cramer-rao.
+
+Cuando se cumplen las condiciones R1, R2 y R3, se dice que $hat(theta)_"MLE"$ es eficiente, es decir, es el mejor estimador insesgado (BUE).
+
+#note-box[
+  Ser el mejor estimador insesgado (BUE) no significa ser el mejor estimador lineal insesgado (BLUE). La implicancia al revés tampoco es cierta. Para modelos lineales, conviene ocupar OLS, pero también se puede ocupar MLE.
+]
+
+#important-box[
+  + MLE es un método de inferencia.
+
+  + $hat(theta)_"MLE"$ es un buen estimador cuando se cumplen las condiciones de regularización.
+
+  + Vamos a depender siempre de $f, X$ y $theta$.
+]
+
+=== Cota de Cramer-Rao <cramer-rao>
+
+Sea $hat(theta)$ un estimador insesgado de $theta$. Entonces, se cumple que:
+
+$
+  var(hat(theta)) >= 1/(N dot I(theta))
+$
+
+== Criterios de información para evaluar ajuste
+
+Los criterios de información son herramientas estadísticas que permiten evaluar la calidad de un modelo ajustado a los datos. Tenemos el AIC (_Akaike Information Criterion_) y el BIC (_Bayesian Information Criterion_). Ambos criterios buscan penalizar la complejidad del modelo, es decir, el número de parámetros estimados. La idea es que un modelo más complejo no necesariamente es mejor, y por lo tanto, se debe penalizar.
+
+Estas métricas se definen de la siguiente forma:
+
+$
+  "AIC" &= 2k - 2 ln L \
+  "BIC" &= k ln N - 2 ln L
+$
+
+donde $N$ es el número de datos, y $k$ el número de parámetros. Un AIC o BIC más alto es peor, y más bajo es mejor.
+
+#important-box[
+  Estas métricas se comparan siempre bajo un mismo modelo. Si tenemos dos modelos, donde el primero es de regresión lineal y el segundo de regresión polinomial, no podemos comparar las métricas (AIC, $log$-likelihood, BIC, etc.) entre ambos métodos, porque provienen de un modelo $f$ distinto.
+
+  Por otro lado, si agrego más parámetros a un mismo modelo, por ejemplo, el de regresión lineal, entonces puedo comparar las métricas entre ambos modelos bajo dicha regresión. Esto es porque provienen del mismo modelo $f$.
+]
+
+== Uso aplicado de MLE
+
+En esta sección, se verán $3$ ejemplos asociados al uso de MLE, realizando la estimación teórica de los parámetros de distintos modelos en casos aplicados.
+
+#example-box(title: "Retención de clientes.")[
+  Modelos en fuga (_churn_). Definimos $p$ como la probabilidad de que un cliente se fugue en el periodo $t$, y $T$ como la variable aleatoria que modela cuántos periodos permanece un cliente en la compañía. Entonces tendremos que:
+
+  $
+    PP(T=t bar p) &= (1-p)^(t-1) dot p \
+    PP(T > t bar p) &= (1-p)^t
+  $
+
+  con $t in NN_0$. Para un modelo general, donde tenemos $N$ clientes, $M$ periodos, e $Y_t$ es la cantidad de clientes que se fueron en el periodo $t$, tendremos que:
+
+  $
+    N - sum_(i=1)^t Y_i
+  $
+
+  es la cantidad de clientes que permanecen en el periodo $t$.
+
+  Entonces, para los $N$ clientes se cumple lo siguiente:
+  
+  $
+    PP(T > t bar p) = [(1-p)^(t-1) dot p]^(Y_t) dot [(1-p)^t]^(N - sum_(i=1)^t Y_i)
+  $
+
+  y en particular, se define la función de verosimilitud como $L(p) = product_(t=1)^M PP(T > t bar p)$.
+
+  Para encontrar la estimación del parámetro $p$ por MLE, es decir, $hat(p)_"MLE"$, primero calculamos la $log$-verosimilitud:
+
+  $
+    ell(p) &= sum_(t=1)^M ln [[(1-p)^(t-1) dot p]^(Y_t) dot [(1-p)^t]^(N - sum_(i=1)^t Y_i)] \
+    &= sum_(t=1)^M Y_t ln[(1-p)^(t-1) dot p] + sum_(t=1)^M (N - sum_(i=1)^t Y_i) ln[(1-p)^t] \
+    &= sum_(t=1)^M Y_t dot (t-1) dot ln(1-p) + sum_(t=1)^M Y_t ln p + sum_(t=1)^M (N - sum_(i=1)^t Y_i) dot t dot ln(1-p) \
+    &= ln(1-p) dot [sum_(t=1)^M Y_t dot (t-1) + sum_(t=1)^M (N - sum_(i=1)^t Y_i) dot t] + ln p dot sum_(t=1)^M Y_t \ 
+    &= ln(1-p) dot c_1 + ln p dot c_2
+  $
+
+  Este último paso es posible porque $c_1$ y $c_2$ no dependen de $p$, entonces se pueden ver como constantes en la derivada. De esta forma:
+
+  $
+    (partial ell(p))/(partial p) &= -c_1/(1-p) + c_2/p \
+  $
+  
+  Esta derivada cumple el punto crítico en $p=hat(p)_"MLE"$, es decir:
+
+  $
+    hat(p)_"MLE" = (c_2)/(c_1 + c_2)
+  $
+]
+
+#example-box(title: "Utilización de camas UCI.")[
+  Vamos a modelar el tiempo de utilización de las camas UCI dentro de un hospital. Para ello, diremos que hay $M$ pacientes que ya desocuparon su cama UCI, y $N$ pacientes que aún están en la UCI. Acá tenemos "datos censurados", porque tenemos una foto de un instante de tiempo.
+
+  Para modelar tiempo, se suele usar la variable aleatoria exponencial. Así, diremos que $X$ es el tiempo de estadía de una persona en la UCI (en días), con $X ~ exp(lambda)$. Las funciones de densidad de una exponencial son:
+
+  $
+    f(x) = lambda e^(-lambda x); quad F(x) = 1 - e^(-lambda x)
+  $
+
+  con $x >= 0$, y $lambda > 0$. La función de verosimilitud es la siguiente:
+
+  $
+    L(lambda) = [product_(m=1)^M lambda e^(-lambda X_(1,m))] dot [product_(n=1)^N (1-(1-e^(-lambda X_(2,n))))] \
+  $
+
+  donde los primeros $M$ términos corresponden a los pacientes que ya desocuparon la cama y estuvieron $X_(1,i)$ días ($i in {1, dots, M}$), y los $N$ términos que siguen corresponden a los pacientes que aún no se han ido, y no se sabe cuándo se van a ir, pero han estado al menos $X_(2,j)$ días $j in {1, dots, N}$. Por este motivo se ocupa el complemento.
+
+  Acá, tenemos que la $log$-verosimilitud es:
+
+  $
+    ell(lambda) &= M dot ln lambda - lambda dot underbrace([sum_(m=1)^M X_(1,m) + sum_(n=1)^N X_(2,n)], S) \
+    &= M dot ln lambda - S lambda
+  $
+
+  y así, aplicando condición de primer orden, se obtiene el estimador de máxima verosimilitud:
+
+  $
+    (partial ell(lambda))/(partial lambda) &= lr(M/lambda - S|)_(lambda = hat(lambda)_"MLE") = 0 \
+    &<==> hat(lambda)_"MLE" = M/S
+  $
+]
+
+#example-box(title: "Modelos de elección discreta: Multinomial Logit.")[
+  McFadden, un economista, postuló que las personas son agentes racionales y toman la decisión que maximiza su función de utilidad. Entonces, si tenemos $N$ personas e $I$ alternativas, la función de utilidad se define como:
+
+  $
+    U_(n, i) = V_(n, i) + epsilon_(n, i); quad n in {1, dots, N}; quad i in {1, dots, I}
+  $
+
+  donde $epsilon_(n,i)$ son los factores no observables, y $V_(n,i)$ es la utilidad observada. La utilidad observada se define como:
+
+  $
+    V_(n, i) = beta_0 + beta_1 X_1 + dots + beta_k X_(k); quad n in {1, dots, N}; quad i in {1, dots, I}
+  $
+
+  Luego, definimos la variable aleatoria $Y_(n,i)$ como:
+
+  $
+    Y_(n,i) = cases(
+      1 & "si la persona" n "elige la alternativa" i \
+      0 & "en otro caso"
+    )
+  $
+
+  Así, la probabilidad de que la persona $n$ escoja la alternativa $i$ es:
+
+  $
+    PP(Y_(n,i) = 1) &= PP(U_(n,i) >= U_(n,j)) & forall i != j \
+    &= PP(V_(n,i) + epsilon_(n,i) >= V_(n,j) + epsilon_(n,j)) & forall i != j \
+    &= PP(V_(n,i) + epsilon_(n,i) - V_(n,j) >= epsilon_(n,j)) & quad forall i != j \
+  $
+
+  Para calcular esta probabilidad, necesitamos una distribución para $epsilon_(n,j)$. La más común es la de Gumbel, o valor extremo tipo $1$, que se define como:
+  
+  $
+    f(epsilon_(i,j)) = e^(-epsilon_(i,j)) e^(-e^(-epsilon_(i,j))); quad F(epsilon_(i,j)) = e^(-e^(-epsilon_(i,j)))
+  $
+
+  Con esta distribución, la probabilidad de que la persona $n$ escoja la alternativa $i$ es:
+
+  $
+    PP(V_(n,i) + epsilon_(n,i) - V_(n,j) >= product_(j != i) e^(-e^(-epsilon_(n, i) + V_(n,i) - V_(n,j)))) &= integral [product_(j != i) e^(-e^(-epsilon_(n, i) + V_(n,i) - V_(n,j)))] dot f(epsilon_(i,j)) dif epsilon_(i,j) \
+    &= (e^(V_(n,i)))/(sum_(j=1)^I e^(V_(n,j))) \
+  $
+
+  Cuando existen dos alternativas, se habla de un modelo binomial _logit_, que se usa en regresión logística. En este caso, la probabilidad de que la persona $n$ escoja la alternativa $i$ es:
+
+  $
+    PP(Y_(n,i) = 1) = (e^(V_(n,i)))/(1 + e^(V_(n,i))) \
   $
 ]
