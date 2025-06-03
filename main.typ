@@ -1367,3 +1367,95 @@ En esta sección, se verán $3$ ejemplos asociados al uso de MLE, realizando la 
     PP(Y_(n,i) = 1) = (e^(V_(n,i)))/(1 + e^(V_(n,i))) \
   $
 ]
+
+#pagebreak(weak: true)
+
+= Análisis de sobrevida (_Survival Analysis_)
+
+Es una colección de modelos estadísticos cuyo objetivo es estudiar la siguiente variable de interés: $X :=$ Tiempo que pasa hasta que ocurre un evento.
+
+Inicio mi seguimiento, pasa el tiempo, y luego ocurre el evento, también llamado _failure_. El tiempo que pasa se llama "tiempo de sobrevida" (días, semanas, meses, años), y el evento depende del contexto. Para la salud, podría ser "muerte", "recaída", etc.
+
+== Función de sobrevida
+
+Se define la variable aleatoria $T$ como el tiempo de sobrevida, y la función de sobrevida se escribe $S(t)$.
+
+#example-box(title: [¿Cuál es la probabilidad de que una persona sobreviva más de $5$ años?])[
+  La podemos escribir como $S(t) = PP(T>t = 5 "años")$. Esta función describe la probabilidad de que un registro pase el umbral de tiempo que se está estudiando.
+]
+
+Idealmente, la función de sobrevida es continua y decreciente, pero en la práctica tenemos una función $hat(S)(t)$ que se mide "por partes", porque nunca los registros son continuos, sino que discretos.
+
+Un problema que debemos enfrentar son los datos censurados, que se debe a mediciones imperfectas. Esto genera que no tengamos las mediciones de todas las personas. Por ejemplo, un experimento podría cortar en un día $d$ para una colección de personas $cal(P)$, pero no sabemos qué pasará en los días $d'>d$ para personas que no están en $cal(P)$.
+
+== Función de riesgo
+
+La función de riesgo se define como la probabilidad de que ocurra el evento en un tiempo $t$, dado que no ha ocurrido antes. Se anota como $h(t)$. Cumplen las siguientes propiedades:
+
+1. Deben ser no negativas, es decir, $h(t) >= 0$.
+
+2. No tienen una cota superior.
+
+Describe una medida de un potencial instantáneo, identifican la forma específica de un modelo, y permiten modelar matemáticamente el análisis de sobrevida.
+
+== Relación entre funciones
+
+Las funciones de sobrevida y riesgo están matemáticamente relacionadas. La relación se escribe como:
+
+$
+  S(t) = exp(-integral_(0)^t h(u) dif u); quad h(t) = -(dif S(t)\/dif t)/S(t)
+$
+
+Los objetivos del análisis de sobrevida son:
+
+1. Estimar e interpretar la función de sobrevida o la función de riesgo utilizando datos de sobrevida.
+
+2. Comparar ambas funciones.
+
+3. Identificar la relación que tienen otras variables explicativas en el tiempo de sobrevida.
+
+== Estimador de Kaplan-Meier
+
+La fórmula general de Kaplan-Meier es:
+
+$
+  hat(S)(t_((f))) = hat(S)(t_((f-1))) dot PP(T > t_((f)) | T >= t_((f)))
+$
+
+Como esto se puede definir como una recursión, entonces tenemos la siguiente fórmula cerrada:
+
+$
+  hat(S)(t_((f-1))) = product_(i=1)^(f-1) PP(T > t_((i)) bar T >= t_((i)))
+$
+
+Cada parámetro se describe a continuación: $t_f$: tiempo de falla ordenado, $n_f$: cantidadd en el conjunto de riesgo, $m_f$: cantidad que falló en ese tiempo, y $q_f$: cantidad de casos censurados. Se confecciona una tabla donde se hace un seguimiento, y sobre esos datos se calcula la curva de sobrevida.
+
+== Test Log-Rank
+
+El test Log-Rank es una prueba estadística que se utiliza para comparar las curvas de sobrevida de dos o más grupos. La hipótesis nula $H_0$ es que no hay diferencias significativas entre las dos curvas. El estadístico se calcula de la siguiente forma:
+
+$
+  L = ((O_2 - E_2)^2)/(var(O_2 - E_2)); quad O_i - E_i = sum_(f=1)^(17) (m_(i f) - e_(i f)), quad i in {1, 2}
+$
+
+donde $m_(i f)$ es la cantidad de casos que fallaron en el grupo $i$ en el tiempo $f$, y $e_(i f)$ es la cantidad de casos en riesgo en el tiempo $f$ en el grupo $i$. Bajo $H_0$, este estadístico distribuye como una $chi^2$ con $1$ grado de libertad.
+
+== Regresiones de Cox
+
+Modelo semiparamétrico para explicar aquellas variables que son protectoras o de riesgo para la ocurrencia del evento estudiado:
+
+$
+  h(t, X) = h_0(t) dot exp(sum_i^K beta_i X_i)
+$
+
+con $i in {1, dots, K}$ variables explicativas, y $h_0 (t)$ es el riesgo basal. La función de riesgo base debe ser no negativa, y no está especificada. Se estima por _partial likelihood_, que es una función de verosimilitud parcial, y se define como:
+
+$
+  L(beta) = product_(I in D) (exp(z_I^T beta))/(sum_(k in R (t_I)) exp(z_k^T beta))
+$
+
+El supuesto del riesgo proporcional dice que el riesgo puede cambiar a lo largo del tiempo, pero su razón entre grupos es constante, entonces se simplifica al hacer los cálculos, y no es necesario estimarlo.
+
+#note-box[
+  La librería `lifelines` de Python es una buena opción para trabajar con análisis de sobrevida. Permite calcular la función de sobrevida, la función de riesgo, y realizar regresiones de Cox, entre otras cosas.
+]
