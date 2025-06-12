@@ -1459,3 +1459,296 @@ El supuesto del riesgo proporcional dice que el riesgo puede cambiar a lo largo 
 #note-box[
   La librería `lifelines` de Python es una buena opción para trabajar con análisis de sobrevida. Permite calcular la función de sobrevida, la función de riesgo, y realizar regresiones de Cox, entre otras cosas.
 ]
+
+== Estadística bayesiana
+
+#example-box(title: "Enfrentamiento de NBA.")[
+  En la NBA, ¿cuál es la probabilidad de que gane Indiana Pacers contra Oklahoma City Thunder? Una idea sería ver cuántas veces le han ganado los _pacers_ a Oklahoma, pero tenemos poca información, o alta incertidumbre, como para ocupar un enfoque frecuentista.
+
+  Según el libro _Bayesian Data Analysis_ de Gelman, "los métodos bayesianos nos permiten realizar afirmaciones acerca del conocimiento parcial disponible, es decir, los datos que tenemos acerca de una situación o _state of nature_ de manera sistemática usando probabilidades".
+]
+
+=== Regla de Bayes
+
+La regla de Bayes, o de probabilidades condicionales, dice que:
+
+$
+  PP(A bar B) = (PP(B bar A) dot PP(A))/(PP(B))
+$
+
+La notación que ocuparemos en el curso contempla un espacio paramétrico $Theta$, y parámetros $theta in Theta$. Los datos se anotarán con la letra $y$. Vamos a querer estimar la siguiente probabilidad:
+
+$
+  PP(theta bar y) = (PP(y bar theta) dot PP(theta))/(PP(y))
+$
+
+donde $PP(theta)$ se conoce como _prior_ (o distribución _a priori_), $PP(y)$ como constante de normalización, y $PP(y bar theta)$ como la verosimilitud. La distribución anterior se conoce como "distribución _a posteriori_". Como $PP(y)$ es constante después de observar los datos, lo que nos interesa estudiar es lo siguiente:
+
+$
+  PP(theta bar y) prop underbrace(PP(y bar theta) dot PP(theta), "operación de interés")
+$
+
+#example-box(title: "Distribución binomial.")[
+  Sea una distribución $Bin(y bar theta, n)$. Su función de verosimilitud es la siguiente:
+
+  $
+    L(theta bar n,x) = PP(n,x bar theta) = binom(n,x) dot theta^x dot (1-theta)^(n-x)
+  $
+
+  donde para nuestra definición, $y=x$ y $theta=p$. Encontraremos la distribución _a posteriori_ para el parámetro $p$ de la binomial.
+
+  $
+    PP(y bar theta) prop theta^y dot (1-theta)^(n-y)
+  $
+
+  pero nos falta el _prior_. Un buen _prior_ para el caso de la binomial es una distribución $"Unif"[0,1]$, porque $p$ representa la probabilidad de éxito, y está acotada en ese intervalo. Recordando algunas propiedades de las distribuciones uniformes:
+
+  $
+    theta ~ "Unif"[a,b] ==> PP(theta) = 1/(b-a), space theta in [a,b], quad EE[theta] = (a+b)/2, quad var(theta) = (b-a)^2/12
+  $
+
+  Así, $PP(theta) = 1\/(1-0) = 1$, y nos quedamos con la misma proporción de arriba para la distribución _a posteriori_, es decir, $PP(theta bar y) prop theta^y dot (1-theta)^(n-y) dot 1 = theta^y dot (1-theta)^(n-y)$. Esta distribución es proporicional a una distribución $"Beta"(y+1, n-y+1)$. La distribución $beta$ tiene las siguientes propiedades:
+
+  $
+    theta ~ "Beta"(alpha, beta) ==>& PP(theta) = Gamma(alpha + beta)/(Gamma(alpha) Gamma(beta)) dot theta^(alpha-1) dot (1-theta)^(beta - 1),\
+    & EE[theta] = (alpha)/(alpha + beta), quad var(theta) = (alpha beta)/((alpha + beta)^2 (alpha + beta + 1))
+  $
+
+  y desarrollando la probabilidad, se obtiene la afirmación:
+
+  $
+    PP(theta bar y+1, n-y+1) = Gamma(y+1+n-y+1)/(Gamma(y+1) Gamma(n-y+1)) dot theta^y dot (1-theta)^(n-y) prop theta^y dot (1-theta)^(n-y)
+  $
+
+  El objetivo es hacer predicciones. Para que ocurra el éxito:
+
+  $
+    PP(overline(y) = 1 bar y) &= integral_0^1 PP(overline(y)=1 bar theta, y) dot PP(theta bar y) dif theta \
+    &= integral_0^1 theta dot PP(theta bar y) dif theta \
+    &= E[theta bar y] = (y+1)/(y+1+n-y+1) = (y+1)/(n+2)
+  $
+
+  Esto se parece a la proporción de la muestra, es decir, $y\/n$. Se habla de que la esperanza condicional calculada representa el compromiso de la verosimilitud con el _prior_. 
+
+  En el mundo frecuentista, hablábamos de intervalos de confianza. En el mundo bayesiano, hablaremos de la _High Density Region_ de la distribución _a posteriori_. Esta región permite recuperar parámetros $theta in Theta$ que estén cerca de explicar de la mejor forma los datos, dada la verosimilitud y el _prior_.
+]
+
+
+#pagebreak(weak: true)
+
+= Inferencia bayesiana
+
+Recordemos que $EE[theta bar y]$ compromete el _prior_ con la verosimilitud. Si tengo más información previa, entonces el _prior_ va a tener más peso, y la verosimilitud menos peso. Si tengo menos información previa, ocurre lo mismo pero al revés.
+
+#example-box(title: [Distribución binomial, pero con prior $"Beta"(alpha, beta)$.])[
+  Ahora tenemos un _prior_ $theta ~ "Beta"(alpha, beta)$. Recordemos que las propiedades de la distribución $"Beta"$ son las siguientes:
+
+  $
+    PP(theta) = Gamma(alpha + beta)/(Gamma(alpha) Gamma(beta)) dot theta^(alpha-1) dot (1-theta)^(beta - 1); quad EE[theta] = (alpha)/(alpha + beta)
+  $
+
+  entonces tenemos que $PP(theta) prop theta^(alpha-1) dot (1-theta)^(beta-1)$, y podemos afirmar que existieron $alpha-1$ éxitos y $beta-1$ fracasos en el "preexperimento (_prior_)" con probabilidad de éxito $theta$.
+
+  Entonces, la distribución _a posteriori_ $PP(theta bar y)$ va a cumplir la siguiente proporción:
+
+  $
+    PP(theta bar y) prop theta^y dot (1-theta)^(n-y) dot theta^(alpha-1) dot (1-theta)^(beta-1) = theta^(y+alpha-1) dot (1-theta)^(n-y+beta-1)
+  $
+
+  por lo tanto, es proporcional a una $"Beta"(y+alpha, beta+n-y)$. La esperanza condicional de la distribución _a posteriori_ es:
+
+  $
+    EE[theta bar y] = (y+alpha)/(y+alpha+beta+n-y) = (y+alpha)/(n+alpha+beta)
+  $
+
+  esta última expresión representa el compromiso de la verosimilitud con el _prior_.
+]
+
+== _Prior_ conjugado
+
+Si $cal(F)$ es una clase de _sampling distributions_ $PP(y bar theta)$ y $cal(P)$ es una clase de _prior distributions_ para $theta$, entonces $cal(P)$ es conjugada para $cal(F)$ si:
+
+$
+  forall PP(dot bar theta) in cal(F), quad PP(theta bar y) in cal(P) space and space PP(dot) in cal(P)
+$
+
+== Familia exponencial
+
+Definimos la siguiente función de densidad de probabilidad (PDF) parametrizada por $eta in {eta bar A(eta) < infinity}$ con $theta in Theta$:
+
+$
+  PP_theta (x) &= exp(sum_(i=1)^s eta_i (theta) dot T_i (x) - A(theta)) dot h(x) \
+
+  &= exp(sum_(i=1)^s eta_i (theta) dot T_i (x)) dot h(x) g(theta) \
+$
+
+donde $g(theta) = exp(-A(theta))$, y $A$ es la función $log$-normalizadora, definida como sigue:
+
+$
+  A(eta) = ln integral_x exp(sum_(i=1)^s eta_i (theta) dot T_i (x)) dot h(x) dif x
+$
+
+y además:
+
+1. $eta = [eta_1, dots, eta_s]$ es el parámetro natural de la distribución.
+
+2. $T = [T_1, dots, T_s]$ es el estadístico suficiente.
+
+3. $h(x)$ es una función no negativa, es decir, $forall x, h(x) >= 0$.
+
+== Propiedad de suficiencia
+
+Decimos que un estadístico es suficiente cuando ningún otro estadístico sobre la misma muestra aporta información adicional al valor del parámetro. Algunos ejemplos son los siguientes: 
+
+$
+T(x) = 1/N sum_(i=1)^N x_i; quad T'(x) = x
+$
+
+Por otro lado, $T''(x) = min(x)$ y $T'''(x) = c, c in RR$ no son suficientes, porque no aportan información, o toman un valor específico de la muestra.
+
+#example-box(title: "Gamma-Poisson.")[
+  Si $X ~ Poisson(lambda)$, entonces $f(x) = lambda^x e^(-lambda)\/x!$ con función de verosimilitud:
+
+  $
+    PP(y bar theta) &= product_(i=1)^N 1/(y_i !) dot theta^(y_i) e^(-theta); & theta=lambda \
+    &prop theta^(t(y)) dot e^(-N theta); & t(y) = sum_(i=1)^N y_i \
+  $
+
+  Para calcular $PP(theta bar y)$, debemos escoger idealmente un $PP(theta)$ con forma $theta^A dot e^(-B theta)$. 
+
+  Si $theta ~ "Gamma"(alpha, beta)$, tenemos lo siguiente:
+  
+  $
+  PP(theta) = (beta^alpha)/(Gamma(alpha)) dot theta^(alpha-1) e^(-beta theta), space theta > 0; quad EE[theta] = alpha/beta; quad var(theta) = alpha/beta^2
+  $
+
+  Así, vamos a usar un _prior_ $"Gamma"$, dado que tiene la forma que esperábamos. Por lo tanto, la distribución _a posteriori_ cumple la siguiente proporción:
+
+  $
+    PP(theta bar y) &prop theta^(t(y)) dot e^(-N theta) dot theta^(alpha-1) dot e^(-beta theta) = theta^(t(y) + alpha - 1) dot e^(-(N + beta) theta) \
+    &prop "Gamma"(t(y) + alpha, N + beta)
+  $
+]
+
+Con las familias conjugadas, si tenemos la verosimilitud y la distribución _a posteriori_, podemos calcular la densidad marginal de los datos, es decir, podemos encontrar la siguiente expresión:
+
+$
+  PP(y) = (PP(y bar theta) dot PP(theta))/PP(theta bar y)
+$
+
+Para el caso de la _Gamma-Poisson_, tenemos que:
+
+$
+  PP(y) &= (Poisson(theta bar y) dot "Gamma"(alpha, beta))/("Gamma"(theta bar alpha + y, 1 + beta)) \
+  y &~ "Neg-Binomial"(alpha, beta) \
+$
+
+== _Prior_ propio
+
+Decimos que un _prior_ $PP(theta)$ es propio si no depende de los datos e integra $1$. Si no integra $1$, pero integra cualquier valor positivo finito, entonces se le llama densidad no normalizada y la podemos normalizar para que integre $1$.
+
+#example-box(title: "Modelo exponencial.")[
+  La distribución exponencial tiene una propiedad de pérdida de memoria, es decir:
+
+  $
+    PP(y > t + s bar y > s, theta) = PP(y > t bar theta)
+  $
+
+  Su verosimilitud tiene la siguiente forma:
+
+  $
+    PP(y bar theta) = theta e^(-y theta), space y > 0
+  $
+
+  El _prior_ conjugado es una distribución $"Gamma"(alpha, beta)$. Cuando tenemos $N$ realizaciones, tenemos la siguiente expresión para la verosimilitud:
+
+  $
+  PP(y bar theta, N) = product_(i=1)^N theta e^(-y_i theta) = theta^N e^(-theta (sum_(i=1)^N Y_i)) = theta^N dot e^(-theta dot N overline(y))
+  $
+
+  Y así, la distribución _a posteriori_ cumple la siguiente proporción:
+
+  $
+    PP(theta bar y) &prop theta^N dot e^(-theta dot N overline(y)) dot theta^(alpha-1) dot e^(-beta theta) = theta^(N+alpha-1) dot e^(-(N overline(y) + beta) theta) \
+    &~ "Gamma"(N + alpha, N overline(y) + beta)
+  $
+]
+
+#example-box(title: "Estimación en una distribución normal (Normal-Normal).")[
+  Queremos estimar los parámetros de una distribución normal, es decir, $arrow(theta) = (mu, sigma^2)$. Para ello, separaremos la explicación en casos:
+
+  1. Asumiremos que nuestro parámetro desconocido es $mu = theta$, y $sigma^2$ es conocido. La PDF de una normal es la siguiente:
+
+    $
+    f(x) = 1/sqrt(2 pi sigma^2) e^(-(x - mu)^2/(2 sigma^2))
+    $
+
+    Entonces:
+
+    $
+      PP(y bar theta) = underbrace(1/sqrt(2 pi sigma^2), "constante") e^(-(y - theta)^2/(2 sigma^2)) ~ e^(A x^2 + B x + c) \
+    $
+
+    Así, el _prior_ conjugado es una normal:
+    
+    $
+    PP(theta) prop exp(-1/(2 tau_0^2) (theta - mu_0)^2), quad theta ~ normal(mu_0, tau_0^2)
+    $ 
+
+    Finalmente, la distribución _a posteriori_ cumple la siguiente proporción:
+
+    $
+      PP(theta bar y) &prop exp(-(y - theta)^2/(2 sigma^2)) dot exp(-1/(2 tau_0^2) (theta - mu_0)^2)
+    $
+
+    Esta última expresión se puede reescribir como:
+
+    $
+      PP(theta bar y) prop exp(-1/(2 tau_1^2) (theta - mu_1)^2) ~ normal(mu_1, tau_1^2), quad mu_1 = (1/(tau_0^2) mu_0 + 1/sigma^2 y)/(1/(tau_0^2) + 1/sigma^2); quad tau_1^2 = 1/(1/(tau_0^2) + 1/sigma^2)
+    $
+
+    Notemos que si $tau_0 -> +infinity$, entonces $mu_1 -> y$, es decir, la estimación del parámetro se acerca a la media de la muestra.
+
+  2. Asumiremos que nuestro parámetro desconocido es $sigma = theta$ y $mu$ es conocido. La función de verosimilitud la podemos escribir de la siguiente forma, con $N$ datos:
+
+    $
+      PP(y bar mu, theta) &= (1/sqrt(2 pi theta^2))^N e^(-1/(2 theta^2) dot sum_(i=1)^N (y_i - mu)^2) \
+      &prop (theta^2)^(-N\/2) dot exp(-N/(2 theta^2) dot nu); quad nu = 1/N sum_(i=1)^N (y_i - mu)^2
+    $
+
+    donde $nu$ es un estadístico suficiente.
+
+    El _prior_ conjugado es una distribución $chi^2$ inversa, que se obtiene a partir de una reparametrización de una $"Inv-Gamma"(alpha = nu/2, beta = nu/2 s^2)$, que se define como:
+
+    $
+      f(x) = (nu\/2)^(N\/2)/(Gamma(nu\/2)) s^nu x^(-(nu\/2 + 1)) dot e^(-nu s^2\/(2 x)); quad theta^2 ~ "Inv-"chi^2 (nu_0, sigma_0^2)
+    $
+
+    Así, se obtiene lo siguiente:
+
+    $
+      PP(theta^2) &prop (theta^2)^(-(nu_0\/2 + 1)) dot sigma_0^(nu_0) dot exp(-nu_0 sigma_0^2\/(2 theta^2)) \
+      PP(theta^2 bar y) &prop (theta^2)^(-[(N + nu_0)\/2 + 1]) dot exp(-(nu_0 sigma_0^2 + N nu)\/(2 theta^2)) \
+      &==> theta^2 bar y ~ "Inv-"chi^2 (nu_0 + N, (nu_0 sigma_0^2 + N nu)/(nu_0 + N))
+    $
+
+  3. Estimar ambos parámetros de $normal(mu, sigma^2)$ sin conocer ninguno de ellos, es decir, $theta_1 = mu$ y $theta_2 = sigma^2$. En este caso, tendremos una distribución _a posteriori_ conjunta, es decir:
+
+    $
+      PP(theta_1, theta_2 bar y) prop PP(y bar theta_1, theta_2) dot PP(theta_1, theta_2)
+    $
+
+    Tenemos principalmente dos formas:
+
+    - #underline[Forma A]: Primero, necesitamos la distribución _a posteriori_ conjunta de todos los parámetros, y luego, integramos sobre todos los parámetros que no nos interesen.
+
+    - #underline[Forma B]: Hacemos un muestreo de la distribución _a posteriori_ conjunta, y luego, nos enfocamos en los parámetros que nos interesan, ignorando los otros.
+
+      Por ejemplo, para $theta_1$:
+
+      $
+        PP(theta_1 bar y) = integral PP(theta_1, theta_2 bar y) dif theta_2 = integral PP(theta_1 bar theta_2, y) dot PP(theta_2 bar y) dif theta_2 \
+      $
+
+      En esencia, obtenemos $theta_2$ de su distribución posterior marginal, y luego, obtenemos $theta_1$ de su distribución posterior condicional en $theta_2$. Esto es lo que se conoce como _marginalización_.
+]
